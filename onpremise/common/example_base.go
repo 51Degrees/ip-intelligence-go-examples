@@ -3,10 +3,9 @@ package common
 import "os"
 
 type ExampleParams struct {
-	LicenseKey   string
-	Product      string
-	DataFile     string
-	EvidenceYaml string // TODO: ?
+	LicenseKey string
+	Product    string
+	DataFile   string
 }
 
 type ExampleFunc func(params ExampleParams) error
@@ -22,19 +21,19 @@ func RunExample(exampleFunc ExampleFunc) {
 		dataFile = "51Degrees-LiteV41.ipi"
 	}
 
-	//evidenceYaml := os.Getenv("EVIDENCE_YAML")
-	//if evidenceYaml == "" {
-	//	evidenceYaml = "20000 Evidence Records.yml" // TODO: check if needed this
-	//}
-
 	params := ExampleParams{
 		LicenseKey: licenseKey,
 		DataFile:   dataFile,
-		//EvidenceYaml: evidenceYaml,
 	}
 
 	err := exampleFunc(params)
 	if err != nil {
 		panic(err)
 	}
+}
+
+type TestIpi struct {
+	IpAddress        string
+	Expected         string
+	IsWorkingExample bool // This parameter indicates whether the error received is expected or not.
 }

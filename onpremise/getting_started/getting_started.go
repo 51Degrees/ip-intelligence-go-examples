@@ -1,45 +1,86 @@
 package main
 
+import "C"
 import (
+	"bytes"
 	"fmt"
-	"log"
-
-	"github.com/51Degrees/ip-intelligence-examples-go/ip-intelligence-go/dd"
-	"github.com/51Degrees/ip-intelligence-examples-go/ip-intelligence-go/onpremise"
 	"github.com/51Degrees/ip-intelligence-examples-go/onpremise/common"
+	"github.com/51Degrees/ip-intelligence-go/dd"
+	"github.com/51Degrees/ip-intelligence-go/onpremise"
+	"log"
 )
 
-func runGettingStarted(engine *onpremise.Engine, config *dd.ConfigIpi) {
-	var ipv4Address = "185.28.167.77"
-	var ipv6Address = "fdaa:bbcc:ddee:0:995f:d63a:f2a1:f189"
+var properties = []string{"IpRangeStart", "IpRangeEnd", "AccuracyRadius", "RegisteredCountry", "RegisteredName", "Longitude", "Latitude", "Areas"}
 
-	fmt.Println("Starting Getting Started Example")
+var gettingStartedTests = []*common.TestIpi{
+	{
+		IpAddress: "185.28.167.77",
+		Expected: `IpRangeStart: "185.28.167.0":1
+IpRangeEnd: "185.28.167.127":1
+AccuracyRadius: "485920":1
+RegisteredCountry: "GB":1
+RegisteredName: "CUSTOMERS-Subnet9":1
+Longitude: "80.339976195562613":1
+Latitude: "25.502792443617054":1
+Areas: "POLYGON((83.026215399639881 23.725699636829738,82.993255409405805 23.717459639271219,82.954802087466049 23.714712973418379,82.916348765526294 23.717459639271219,78.444776757103185 24.338206122013002,78.40083010345775 24.349192785424361,78.356883449812315 24.368419446394238,78.31843012787256 24.395886104922635,78.290963469344163 24.431592761009551,78.268990142521446 24.47004608294931,78.208563493758959 24.621112704855495,78.20307016205328 24.637592699972533,77.005523850215155 28.579058198797572,76.994537186803797 28.617511520737327,76.994537186803797 28.655964842677083,77.005523850215155 28.691671498764002,77.027497177037873 28.727378154850918,77.04947050386059 28.760338145084994,77.082430494094666 28.785058137760551,77.120883816034421 28.807031464583268,77.164830469679856 28.82076479384747,77.203283791619612 28.826258125553149,77.25272377697074 28.826258125553149,80.191656239509257 28.474684896389661,80.208136234626295 28.471938230536821,81.630909146397286 28.194524979400008,81.647389141514324 28.189031647694328,83.756828516495261 27.60948515274514,83.789788506729337 27.598498489333782,83.822748496963413 27.582018494216744,83.932615131077 27.513351847895748,83.960081789605397 27.491378521073031,83.982055116428114 27.469405194250314,84.487441633350628 26.859645374919889,84.509414960173345 26.829432050538653,84.558854945524459 26.73879207739494,84.575334940641497 26.697592089602345,84.828028199102761 25.788445692312386,84.83352153080844 25.744499038666952,84.83352153080844 25.703299050874357,84.817041535691402 25.662099063081758,84.795068208868685 25.623645741142003,83.756828516495261 24.272286141544846,83.72936185796685 24.247566148869289,83.542588579973753 24.069032868434707,83.526108584856715 24.055299539170505,83.218482009338658 23.805352946562088,83.185522019104582 23.783379619739371,83.147068697164826 23.766899624622333,83.026215399639881 23.725699636829738,83.026215399639881 23.725699636829738))":1
+`,
+		IsWorkingExample: true,
+	},
+	{
+		IpAddress: "fdaa:bbcc:ddee:0:995f:d63a:f2a1:f189",
+		Expected: `IpRangeStart: "fc00:0000:0000:0000:0000:0000:0000:0000":1
+IpRangeEnd: "fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff":1
+AccuracyRadius: "-1":1
+RegisteredCountry: "Unknown":1
+RegisteredName: "IANA-V6-ULA":1
+Longitude: "0":1
+Latitude: "0.00274666585284":1
+Areas: "POLYGON EMPTY":1
+`,
+	},
+	{
+		IpAddress:        "127.0.0.1",
+		Expected:         ``,
+		IsWorkingExample: false,
+	},
+}
 
-	fmt.Println("\nIpv4 Address: %s\n", ipv4Address)
-	fmt.Println("\nIpv6 Address: %s\n", ipv6Address)
+func testIpi(engine *onpremise.Engine, ipiItem *common.TestIpi) {
+	result, err := engine.Process(ipiItem.IpAddress)
+	if err != nil {
+		log.Printf("Error processing Getting Started Example: %v", err)
+		return
+	}
+	defer result.Free()
 
-	// var properties = "IpRangeStart,IpRangeEnd,AccuracyRadius,RegisteredCountry,RegisteredName,Longitude,Latitude,Areas"
-	// _ = properties
+	if result.HasValues() {
+		var actual bytes.Buffer
+		for _, property := range properties {
+			res, err := dd.GetPropertyValueAsString(result.CPtr, property)
+			if err != nil {
+				log.Printf("Error processing property %s with error: %v", property, err)
+				return
+			}
 
-	// //rm := dd.NewResourceManager()
+			actual.WriteString(fmt.Sprintf("%s: %s\n", property, res))
+		}
 
-	// // Setup a resource manager
-	// manager := dd.NewResourceManager()
-	// // Free manager
-	// defer manager.Free()
+		if actual.String() == ipiItem.Expected {
+			log.Printf("Expected result for %s:\nExpected & Actual:\n%s\n", ipiItem.IpAddress, actual.String())
+			return
+		}
 
-	// filePath := "/Users/marinalee/Documents/WORK/Postindustria/51Degrees/ip-intelligence-cxx/ip-intelligence-data/51Degrees-EnterpriseIpiV41.ipi"
+		log.Printf("Not expected result for %s:\nExpected:\n%s\nActual:\n%s\n", ipiItem.IpAddress, ipiItem.Expected, actual.String())
+		return
+	}
 
-	// if err := dd.InitManagerFromFile(manager, *config, properties, filePath); err != nil {
-	// 	fmt.Printf("failed to init manager from file: %w", err)
-	// }
-	//
-	//err := dd.InitManagerFromFile(engine.manager, *e.config, e.managerProperties, filePath)
-	//
-	//if status != dd.STATUS_SUCCESS {
-	//	res := dd.ReportStatus(status, filePath)
-	//	fmt.Printf("%s\n", res)
-	//}
+	fmt.Printf("Not found result for ipi: %s\n", ipiItem.IpAddress)
+}
+
+func runGettingStarted(engine *onpremise.Engine) {
+	for _, test := range gettingStartedTests {
+		testIpi(engine, test)
+	}
 }
 
 func main() {
@@ -63,7 +104,7 @@ func main() {
 			}
 
 			// Run example
-			runGettingStarted(engine, config)
+			runGettingStarted(engine)
 
 			engine.Stop()
 
