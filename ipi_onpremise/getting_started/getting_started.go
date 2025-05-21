@@ -4,15 +4,14 @@ import "C"
 import (
 	"bytes"
 	"fmt"
-	"github.com/51Degrees/ip-intelligence-examples-go/onpremise/common"
-	"github.com/51Degrees/ip-intelligence-go/dd"
-	"github.com/51Degrees/ip-intelligence-go/onpremise"
+	"github.com/51Degrees/ip-intelligence-examples-go/ipi_examples_interop"
+	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
+	"github.com/51Degrees/ip-intelligence-go/ipi_interop"
+	"github.com/51Degrees/ip-intelligence-go/ipi_onpremise"
 	"log"
 )
 
-var properties = []string{"IpRangeStart", "IpRangeEnd", "AccuracyRadius", "RegisteredCountry", "RegisteredName", "Longitude", "Latitude", "Areas"}
-
-var gettingStartedTests = []*common.TestIpi{
+var gettingStartedTests = []*ipi_examples_interop.TestIpi{
 	{
 		IpAddress: "185.28.167.77",
 		Expected: `IpRangeStart: "185.28.167.0":1
@@ -45,7 +44,7 @@ Areas: "POLYGON EMPTY":1
 	},
 }
 
-func testIpi(engine *onpremise.Engine, ipiItem *common.TestIpi) {
+func testIpi(engine *ipi_onpremise.Engine, ipiItem *ipi_examples_interop.TestIpi) {
 	result, err := engine.Process(ipiItem.IpAddress)
 	if err != nil {
 		log.Printf("Error processing Getting Started Example: %v", err)
@@ -55,8 +54,8 @@ func testIpi(engine *onpremise.Engine, ipiItem *common.TestIpi) {
 
 	if result.HasValues() {
 		var actual bytes.Buffer
-		for _, property := range properties {
-			res, err := dd.GetPropertyValueAsString(result.CPtr, property)
+		for _, property := range common.Properties {
+			res, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, property)
 			if err != nil {
 				log.Printf("Error processing property %s with error: %v", property, err)
 				return
@@ -77,7 +76,7 @@ func testIpi(engine *onpremise.Engine, ipiItem *common.TestIpi) {
 	fmt.Printf("Not found result for ipi: %s\n", ipiItem.IpAddress)
 }
 
-func runGettingStarted(engine *onpremise.Engine) {
+func runGettingStarted(engine *ipi_onpremise.Engine) {
 	for _, test := range gettingStartedTests {
 		testIpi(engine, test)
 	}
@@ -85,19 +84,18 @@ func runGettingStarted(engine *onpremise.Engine) {
 
 func main() {
 	common.RunExample(
-		func(params common.ExampleParams) error {
-			//... Example code
+		func(params *common.ExampleParams) error {
 			//Create config
-			config := dd.NewConfigIpi(dd.Default)
+			config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 
 			//Create on-premise engine
-			engine, err := onpremise.New(
+			engine, err := ipi_onpremise.New(
 				// Optimized config provided
-				onpremise.WithConfigIpi(config),
+				ipi_onpremise.WithConfigIpi(config),
 				// Path to your data file
-				onpremise.WithDataFile(params.DataFile),
+				ipi_onpremise.WithDataFile(params.DataFile),
 				// Enable automatic updates.
-				onpremise.WithAutoUpdate(false),
+				ipi_onpremise.WithAutoUpdate(false),
 			)
 			if err != nil {
 				log.Fatalf("Failed to create engine: %v", err)
