@@ -17,7 +17,7 @@ type ExampleFunc func(params *ExampleParams) error
 func RunExample(exampleFunc ExampleFunc) {
 	licenseKey := os.Getenv("LICENSE_KEY")
 	if licenseKey == "" {
-		licenseKey = os.Getenv("DEVICE_DETECTION_KEY")
+		licenseKey = os.Getenv("IPI_KEY")
 	}
 
 	dataFile := os.Getenv("DATA_FILE")

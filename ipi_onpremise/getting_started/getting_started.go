@@ -4,14 +4,13 @@ import "C"
 import (
 	"bytes"
 	"fmt"
-	"github.com/51Degrees/ip-intelligence-examples-go/ipi_examples_interop"
 	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
 	"github.com/51Degrees/ip-intelligence-go/ipi_interop"
 	"github.com/51Degrees/ip-intelligence-go/ipi_onpremise"
 	"log"
 )
 
-var gettingStartedTests = []*ipi_examples_interop.TestIpi{
+var gettingStartedTests = []*common.TestIpi{
 	{
 		IpAddress: "185.28.167.77",
 		Expected: `IpRangeStart: "185.28.167.0":1
@@ -44,7 +43,7 @@ Areas: "POLYGON EMPTY":1
 	},
 }
 
-func testIpi(engine *ipi_onpremise.Engine, ipiItem *ipi_examples_interop.TestIpi) {
+func testIpi(engine *ipi_onpremise.Engine, ipiItem *common.TestIpi) {
 	result, err := engine.Process(ipiItem.IpAddress)
 	if err != nil {
 		log.Printf("Error processing Getting Started Example: %v", err)

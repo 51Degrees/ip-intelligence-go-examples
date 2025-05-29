@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"github.com/51Degrees/ip-intelligence-examples-go/ipi_examples_interop"
 	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
 	"github.com/51Degrees/ip-intelligence-go/ipi_interop"
 	"github.com/51Degrees/ip-intelligence-go/ipi_onpremise"
@@ -19,13 +18,13 @@ const reportFile = "ipi_performance_report.log"
 
 const iterationCount = 5
 
-func readYaml(params *common.ExampleParams) (ipi_examples_interop.IpEvidences, error) {
-	evidenceFilePath := ipi_examples_interop.GetFilePathByPath(params.EvidenceYaml)
+func readYaml(params *common.ExampleParams) (common.IpEvidences, error) {
+	evidenceFilePath := common.GetFilePathByPath(params.EvidenceYaml)
 
 	// Open the Evidence Records file for processing
 	file, err := os.OpenFile(evidenceFilePath, os.O_RDONLY, 0444)
 	if err != nil {
-		return ipi_examples_interop.IpEvidences{}, err
+		return common.IpEvidences{}, err
 	}
 
 	defer func() {
@@ -37,7 +36,7 @@ func readYaml(params *common.ExampleParams) (ipi_examples_interop.IpEvidences, e
 	// Create a new scanner to read the file line by line
 	scanner := bufio.NewScanner(file)
 
-	evidences := make(ipi_examples_interop.IpEvidences, 0)
+	evidences := make(common.IpEvidences, 0)
 
 	// Loop through the file and read each line
 	for scanner.Scan() {
@@ -59,7 +58,7 @@ func readYaml(params *common.ExampleParams) (ipi_examples_interop.IpEvidences, e
 	return evidences, nil
 }
 
-func processEvidence(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, ipAddress string, report *ipi_examples_interop.Report) {
+func processEvidence(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, ipAddress string, report *common.Report) {
 	atomic.AddUint64(&report.EvidenceProcessed, 1)
 	// Complete and mark as done
 	defer wg.Done()
@@ -82,8 +81,8 @@ func processEvidence(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, ipAddress
 	defer result.Free()
 }
 
-func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) (*ipi_examples_interop.Report, error) {
-	actReport := &ipi_examples_interop.Report{
+func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) (*common.Report, error) {
+	actReport := &common.Report{
 		IterationCount: iterationCount,
 	}
 
@@ -105,7 +104,7 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) 
 	for i := 0; i < actReport.IterationCount; i++ {
 		for _, evidence := range evidences {
 			wg.Add(1)
-			processEvidence(engine, &wg, evidence, actReport)
+			go processEvidence(engine, &wg, evidence, actReport)
 		}
 	}
 

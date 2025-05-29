@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/51Degrees/ip-intelligence-examples-go/ipi_examples_interop"
 	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
 	"github.com/51Degrees/ip-intelligence-go/ipi_interop"
 	"github.com/51Degrees/ip-intelligence-go/ipi_onpremise"
@@ -94,7 +93,7 @@ func getIpi(engine *ipi_onpremise.Engine, IpAddress string) (*PropertiesData, ya
 }
 
 func runOfflineProcessing(engine *ipi_onpremise.Engine, params *common.ExampleParams) {
-	evidenceFilePath := ipi_examples_interop.GetFilePathByPath(params.EvidenceYaml)
+	evidenceFilePath := common.GetFilePathByPath(params.EvidenceYaml)
 	evDir := filepath.Dir(evidenceFilePath)
 	evBase := strings.TrimSuffix(filepath.Base(evidenceFilePath), filepath.Ext(evidenceFilePath))
 	outputFilePath := fmt.Sprintf("%s/%s.processed.yml", evDir, evBase)

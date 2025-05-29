@@ -1,4 +1,4 @@
-package ipi_examples_interop
+package common
 
 type TestIpi struct {
 	IpAddress        string

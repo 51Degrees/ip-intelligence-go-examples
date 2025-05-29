@@ -20,5 +20,9 @@ github.com/51Degrees/ip-intelligence-go v0.1.10 h1:reF0KKbR8Dk+T/dfnfWhGCLCM7dp7
 github.com/51Degrees/ip-intelligence-go v0.1.10/go.mod h1:eh4T4QvdVem6cSIplKt2t4rKkD7q0ZA7heSJ9PRJz2U=
 github.com/51Degrees/ip-intelligence-go v0.1.11 h1:1m9sBQ4j3QPUYb/udpMXGCJDIcYkVMTKPBA0DgidoHI=
 github.com/51Degrees/ip-intelligence-go v0.1.11/go.mod h1:eh4T4QvdVem6cSIplKt2t4rKkD7q0ZA7heSJ9PRJz2U=
+github.com/51Degrees/ip-intelligence-go v0.1.13 h1:gJamlUGkQvA81FlKVr4K4rDDIoY1rAReOkKrKSXovRU=
+github.com/51Degrees/ip-intelligence-go v0.1.13/go.mod h1:eh4T4QvdVem6cSIplKt2t4rKkD7q0ZA7heSJ9PRJz2U=
+github.com/51Degrees/ip-intelligence-go v0.1.14 h1:Q070sTleZI5epghjXOs4ZoqQMvkcgzMo6J6s2Cgl0Ng=
+github.com/51Degrees/ip-intelligence-go v0.1.14/go.mod h1:eh4T4QvdVem6cSIplKt2t4rKkD7q0ZA7heSJ9PRJz2U=
 github.com/goccy/go-yaml v1.17.1 h1:LI34wktB2xEE3ONG/2Ar54+/HJVBriAGJ55PHls4YuY=
 github.com/goccy/go-yaml v1.17.1/go.mod h1:XBurs7gK8ATbW4ZPGKgcbrY1Br56PdM69F7LkFRi1kA=

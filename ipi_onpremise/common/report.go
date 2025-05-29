@@ -1,4 +1,4 @@
-package ipi_examples_interop
+package common
 
 import (
 	"bytes"
@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"sync"
 )
 
 // Report struct for each performance run
@@ -15,17 +16,20 @@ type Report struct {
 	EvidenceCount     uint64
 	EvidenceProcessed uint64
 	ProcessingTime    int64
+
+	mu        sync.Mutex // Mutex
+	HashCodes []uint32
 }
 
-func (r Report) AverageProcessingTime() float64 {
+func (r *Report) AverageProcessingTime() float64 {
 	return float64(r.ProcessingTime) / float64(r.EvidenceCount)
 }
 
-func (r Report) DetectionPerSecond() float64 {
+func (r *Report) DetectionPerSecond() float64 {
 	return float64(r.EvidenceCount) * 1000 / float64(r.ProcessingTime)
 }
 
-func (r Report) PrintReport(logOutputPath string) error {
+func (r *Report) PrintReport(logOutputPath string) error {
 	var path string
 	if filepath.IsAbs(logOutputPath) {
 		path = logOutputPath
@@ -58,4 +62,17 @@ func (r Report) PrintReport(logOutputPath string) error {
 	}
 
 	return nil
+}
+
+func (r *Report) InitHashCodes(i int) {
+	r.HashCodes = make([]uint32, i)
+}
+
+// updateHashCode updates the hash code with the input code ad the index
+// specified. The update use XOR operation. This function is thread safe to
+// make sure multiple threads can update the hash code correctly
+func (r *Report) UpdateHashCode(code uint32, i uint32) {
+	r.mu.Lock()
+	r.HashCodes[i] ^= code
+	r.mu.Unlock()
 }
