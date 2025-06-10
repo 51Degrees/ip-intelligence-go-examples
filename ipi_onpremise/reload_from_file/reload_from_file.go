@@ -1,3 +1,110 @@
+/* *********************************************************************
+ * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
+ *
+ * This Original Work is licensed under the European Union Public Licence (EUPL)
+ * v.1.2 and is subject to its terms as set out below.
+ *
+ * If a copy of the EUPL was not distributed with this file, You can obtain
+ * one at https://opensource.org/licenses/EUPL-1.2.
+ *
+ * The 'Compatible Licences' set out in the Appendix to the EUPL (as may be
+ * amended by the European Commission) shall be deemed incompatible for
+ * the purposes of the Work and the provisions of the compatibility
+ * clause in Article 5 of the EUPL shall not apply.
+ *
+ * If using the Work as, or as part of, a network application, by
+ * including the attribution notice(s) required under Article 5 of the EUPL
+ * in the end user terms of the application under an appropriate heading,
+ * such notice(s) shall fulfill the requirements of that article.
+ * ********************************************************************* */
+/*
+*
+@example getting_started.go
+Getting started example of using 51Degrees IP intelligence.
+
+The example shows how to use 51Degrees on-premise IP intelligence to
+determine the country of a given IP address in golang wrapper integration.
+
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-go-examples/tree/main/ipi_onpremise/getting_started).
+
+@include{doc} example-require-datafile-ipi.txt
+
+@include{doc} example-how-to-run-ipi.txt
+
+# In detail, the example shows how to
+
+1. Specify config for engine:
+This setting specifies the performance profile that will be used when initializing the C library.
+
+```
+config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
+```
+TODO: add description
+```
+config.SetConcurrency(uint16(runtime.NumCPU()))
+```
+
+2. Initialization of the engine with the following parameters:
+```
+engine, err := ipi_onpremise.New(
+
+	// Optimized config provided
+	ipi_onpremise.WithConfigIpi(config),
+	// Path to your data file
+	ipi_onpremise.WithDataFile(params.DataFile),
+	// Enable automatic updates.
+	ipi_onpremise.WithAutoUpdate(false),
+
+)
+```
+TODO: add description
+
+```
+ipi_onpremise.WithConfigIpi(config)
+```
+TODO: add description
+
+```
+ipi_onpremise.WithDataFile(params.DataFile),
+```
+TODO: add description
+
+```
+ipi_onpremise.WithAutoUpdate(false),
+```
+
+3. Engine output with the parameter of the required address to receive data
+```
+result, err := engine.Process(ipiItem.IpAddress)
+
+```
+
+4. Checking for the presence of the result after engine processing
+```
+if result.HasValues() {}
+
+```
+
+5. Getting the results of the values after processing
+```
+_, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, property);
+
+```
+
+Expected output (ipi_performance_report.log):
+```
+...
+Average 0.08775 ms per Evidence Record
+Average 11396.01 detections per second
+Total Evidence Records: 20000
+Iteration Count: 5
+Processed Evidence Records: 100000
+Number of CPUs: 14
+
+```
+*/
 package main
 
 import (
