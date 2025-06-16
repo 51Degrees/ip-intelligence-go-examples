@@ -93,7 +93,7 @@ _, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, property);
 
 ```
 
-Expected output (ipi_performance_report.log):
+Expected output (performance_report.log):
 ```
 ...
 Average 0.08775 ms per Evidence Record

@@ -190,7 +190,7 @@ areas, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, "Areas")
 
 ```
 
-Expected output (ipi_performance_report.log):
+Expected output (performance_report.log):
 ```
 ...
 2025/06/10 10:16:40 IpRangeStart: "185.28.167.0":1
