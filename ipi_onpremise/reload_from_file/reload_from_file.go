@@ -130,23 +130,19 @@ func executeTest(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, report *commo
 	if err != nil {
 		log.Fatalln(err)
 	}
-	defer res.Free()
 
-	if res.HasValues() {
-		var actual bytes.Buffer
-		for _, property := range common.Properties {
-			res, err := ipi_interop.GetPropertyValueAsRaw(res.CPtr, property)
-			if err != nil {
-				log.Printf("Error processing property %s with error: %v", property, err)
-				return
-			}
-
-			actual.WriteString(fmt.Sprintf("%s: %s\n", property, res))
+	var actual bytes.Buffer
+	for _, property := range common.Properties {
+		value, weight, found := res.GetValueWeightByProperty(property)
+		if !found {
+			log.Printf("Not found values for the next property %s for address %s", property, ipAddress)
 		}
 
-		hash := common.GenerateHash(actual.String())
-		report.UpdateHashCode(hash, iteration)
+		actual.WriteString(fmt.Sprintf("%s: %+v:%.2f\n", property, value, weight))
 	}
+
+	hash := common.GenerateHash(actual.String())
+	report.UpdateHashCode(hash, iteration)
 
 	// Increase the number of Evidence Records processed
 	atomic.AddUint64(&report.EvidenceProcessed, 1)

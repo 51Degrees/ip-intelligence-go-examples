@@ -227,62 +227,59 @@ func processEvidence(engine *ipi_onpremise.Engine, ipAddress string) {
 		log.Printf("Error processing Getting Started Example: %v", err)
 		return
 	}
-	defer result.Free()
 
-	if ipRangeStart, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, "IpRangeStart"); err != nil {
-		log.Printf("Error processing property \"IpRangeStart\" with error: %v\n", err)
-		return
+	if value, weight, found := result.GetValueWeightByProperty("IpRangeStart"); !found {
+		log.Printf("Not found values for the next property %s for address %s", "IpRangeStart", ipAddress)
 	} else {
-		log.Printf("IpRangeStart: %s\n", ipRangeStart)
+		log.Printf("IpRangeStart: %+v:%.2f\n", value, weight)
 	}
 
-	if ipRangeEnd, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, "IpRangeEnd"); err != nil {
-		log.Printf("Error processing property \"IpRangeEnd\" with error: %v\n", err)
-		return
+	if value, weight, found := result.GetValueWeightByProperty("IpRangeEnd"); !found {
+		log.Printf("Not found values for the next property %s for address %s", "IpRangeEnd", ipAddress)
 	} else {
-		log.Printf("IpRangeEnd: %s\n", ipRangeEnd)
+		log.Printf("IpRangeEnd: %+v:%.2f\n", value, weight)
 	}
 
-	if accuracyRadius, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, "AccuracyRadius"); err != nil {
-		log.Printf("Error processing property \"AccuracyRadius\" with error: %v\n", err)
-		return
+	if value, weight, found := result.GetValueWeightByProperty("AccuracyRadius"); !found {
+		log.Printf("Not found values for the next property %s for address %s", "AccuracyRadius", ipAddress)
 	} else {
-		log.Printf("AccuracyRadius: %s\n", accuracyRadius)
+		log.Printf("AccuracyRadius: %+v:%.2f\n", value, weight)
 	}
 
-	if registeredCountry, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, "RegisteredCountry"); err != nil {
-		log.Printf("Error processing property \"RegisteredCountry\" with error: %v\n", err)
-		return
+	if value, weight, found := result.GetValueWeightByProperty("RegisteredCountry"); !found {
+		log.Printf("Not found values for the next property %s for address %s", "RegisteredCountry", ipAddress)
 	} else {
-		log.Printf("RegisteredCountry: %s\n", registeredCountry)
+		log.Printf("AccuracyRadius: %+v:%.2f\n", value, weight)
 	}
 
-	if registeredName, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, "RegisteredName"); err != nil {
-		log.Printf("Error processing property \"RegisteredName\" with error: %v\n", err)
-		return
+	if value, weight, found := result.GetValueWeightByProperty("RegisteredName"); !found {
+		log.Printf("Not found values for the next property %s for address %s", "RegisteredName", ipAddress)
 	} else {
-		log.Printf("RegisteredName: %s\n", registeredName)
+		log.Printf("RegisteredName: %+v:%.2f\n", value, weight)
 	}
 
-	if longitude, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, "Longitude"); err != nil {
-		log.Printf("Error processing property \"Longitude\" with error: %v\n", err)
-		return
+	if value, weight, found := result.GetValueWeightByProperty("Longitude"); !found {
+		log.Printf("Not found values for the next property %s for address %s", "Longitude", ipAddress)
 	} else {
-		log.Printf("Longitude: %s\n", longitude)
+		log.Printf("Longitude: %+v:%.2f\n", value, weight)
 	}
 
-	if latitude, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, "Latitude"); err != nil {
-		log.Printf("Error processing property \"Latitude\" with error: %v\n", err)
-		return
+	if value, weight, found := result.GetValueWeightByProperty("Latitude"); !found {
+		log.Printf("Not found values for the next property %s for address %s", "Latitude", ipAddress)
 	} else {
-		log.Printf("Latitude: %s\n", latitude)
+		log.Printf("Latitude: %+v:%.2f\n", value, weight)
 	}
 
-	if areas, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, "Areas"); err != nil {
-		log.Printf("Error processing property \"Areas\" with error: %v\n", err)
-		return
+	if value, weight, found := result.GetValueWeightByProperty("Areas"); !found {
+		log.Printf("Not found values for the next property %s for address %s", "Areas", ipAddress)
 	} else {
-		log.Printf("Areas: %s\n", areas)
+		log.Printf("Areas: %+v:%.2f\n", value, weight)
+	}
+
+	if value, weight, found := result.GetValueWeightByProperty("MCC"); !found {
+		log.Printf("Not found values for the next property %s for address %s", "MCC", ipAddress)
+	} else {
+		log.Printf("MCC: %+v:%.2f\n", value, weight)
 	}
 }
 

@@ -176,17 +176,12 @@ func processEvidence(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, ipAddress
 		log.Fatalln(err)
 	}
 
-	if result.HasValues() {
-		for _, property := range common.Properties {
-			// don't use the property in the current step, only processing data
-			if _, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, property); err != nil {
-				log.Printf("Error processing property %s with error: %v", property, err)
-				return
-			}
+	for _, property := range common.Properties {
+		// don't use the property in the current step, only processing data
+		if _, _, found := result.GetValueWeightByProperty(property); !found {
+			log.Printf("Not found values for the next property %s for address %s", property, ipAddress)
 		}
 	}
-
-	defer result.Free()
 }
 
 func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) (*common.Report, error) {

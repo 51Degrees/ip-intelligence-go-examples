@@ -121,14 +121,15 @@ import (
 )
 
 type PropertiesData struct {
-	IpRangeStart      string `yaml:"ip-range-start"`
-	IpRangeEnd        string `yaml:"ip-range-end"`
-	AccuracyRadius    string `yaml:"accuracy-radius"`
-	RegisteredCountry string `yaml:"registered-country"`
-	RegisteredName    string `yaml:"registered-name"`
-	Longitude         string `yaml:"longitude"`
-	Latitude          string `yaml:"latitude"`
-	Areas             string `yaml:"areas"`
+	IpRangeStart      interface{} `yaml:"ip-range-start"`
+	IpRangeEnd        interface{} `yaml:"ip-range-end"`
+	AccuracyRadius    interface{} `yaml:"accuracy-radius"`
+	RegisteredCountry interface{} `yaml:"registered-country"`
+	RegisteredName    interface{} `yaml:"registered-name"`
+	Longitude         interface{} `yaml:"longitude"`
+	Latitude          interface{} `yaml:"latitude"`
+	Areas             interface{} `yaml:"areas"`
+	MCC               interface{} `yaml:"mcc"`
 }
 
 func getIpi(engine *ipi_onpremise.Engine, IpAddress string) (*PropertiesData, yaml.CommentMap, error) {
@@ -137,61 +138,62 @@ func getIpi(engine *ipi_onpremise.Engine, IpAddress string) (*PropertiesData, ya
 		log.Printf("Error processing Getting Started Example: %v", err)
 		return nil, nil, err
 	}
-	defer result.Free()
 
 	data := &PropertiesData{}
 
 	comments := yaml.CommentMap{}
 
-	if result.HasValues() {
-		for _, property := range common.Properties {
-			value, weight, err := ipi_interop.GetPropertyValueAsStringWeightValue(result.CPtr, property)
-			if err != nil {
-				log.Printf("Error processing property %s for address %s with error: %v", property, IpAddress, err)
-				continue
-			}
+	for _, property := range common.Properties {
+		value, weight, found := result.GetValueWeightByProperty(property)
+		if !found {
+			log.Printf("Not found values for the next property %s for address %s", property, IpAddress)
+		}
 
-			switch property {
-			case "IpRangeStart":
-				data.IpRangeStart = value
-				comments["$.ip-range-start"] = []*yaml.Comment{
-					yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-				}
-			case "IpRangeEnd":
-				data.IpRangeEnd = value
-				comments["$.ip-range-end"] = []*yaml.Comment{
-					yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-				}
-			case "AccuracyRadius":
-				data.AccuracyRadius = value
-				comments["$.accuracy-radius"] = []*yaml.Comment{
-					yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-				}
-			case "RegisteredCountry":
-				data.RegisteredCountry = value
-				comments["$.registered-country"] = []*yaml.Comment{
-					yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-				}
-			case "RegisteredName":
-				data.RegisteredName = value
-				comments["$.registered-name"] = []*yaml.Comment{
-					yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-				}
-			case "Longitude":
-				data.Longitude = value
-				comments["$.longitude"] = []*yaml.Comment{
-					yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-				}
-			case "Latitude":
-				data.Latitude = value
-				comments["$.latitude"] = []*yaml.Comment{
-					yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-				}
-			case "Areas":
-				data.Areas = value
-				comments["$.areas"] = []*yaml.Comment{
-					yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-				}
+		switch property {
+		case "IpRangeStart":
+			data.IpRangeStart = value
+			comments["$.ip-range-start"] = []*yaml.Comment{
+				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
+			}
+		case "IpRangeEnd":
+			data.IpRangeEnd = value
+			comments["$.ip-range-end"] = []*yaml.Comment{
+				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
+			}
+		case "AccuracyRadius":
+			data.AccuracyRadius = value
+			comments["$.accuracy-radius"] = []*yaml.Comment{
+				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
+			}
+		case "RegisteredCountry":
+			data.RegisteredCountry = value
+			comments["$.registered-country"] = []*yaml.Comment{
+				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
+			}
+		case "RegisteredName":
+			data.RegisteredName = value
+			comments["$.registered-name"] = []*yaml.Comment{
+				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
+			}
+		case "Longitude":
+			data.Longitude = value
+			comments["$.longitude"] = []*yaml.Comment{
+				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
+			}
+		case "Latitude":
+			data.Latitude = value
+			comments["$.latitude"] = []*yaml.Comment{
+				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
+			}
+		case "Areas":
+			data.Areas = value
+			comments["$.areas"] = []*yaml.Comment{
+				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
+			}
+		case "MCC":
+			data.MCC = value
+			comments["$.mcc"] = []*yaml.Comment{
+				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
 			}
 		}
 	}
