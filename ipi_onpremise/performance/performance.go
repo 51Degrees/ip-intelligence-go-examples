@@ -176,7 +176,7 @@ func processEvidence(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, ipAddress
 		log.Fatalln(err)
 	}
 
-	for _, property := range common.Properties {
+	for _, property := range []string{"IpRangeStart"} {
 		// don't use the property in the current step, only processing data
 		if _, _, found := result.GetValueWeightByProperty(property); !found {
 			log.Printf("Not found values for the next property %s for address %s", property, ipAddress)
@@ -233,6 +233,8 @@ func main() {
 				ipi_onpremise.WithDataFile(params.DataFile),
 				// Enable automatic updates.
 				ipi_onpremise.WithAutoUpdate(false),
+
+				ipi_onpremise.WithProperties([]string{"IpRangeStart"}),
 			)
 			if err != nil {
 				log.Fatalf("Failed to create engine: %v", err)
