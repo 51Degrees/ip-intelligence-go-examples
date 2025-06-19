@@ -189,8 +189,6 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) 
 		IterationCount: iterationCount,
 	}
 
-	startProcessTime := time.Now()
-
 	// Getting evidences from the file
 	evidences, err := readYaml(params)
 	if err != nil {
@@ -202,6 +200,8 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) 
 	actReport.EvidenceCount = evidences.Size()
 
 	var wg sync.WaitGroup
+
+	startProcessTime := time.Now()
 
 	// process loaded evidences
 	for i := 0; i < actReport.IterationCount; i++ {
