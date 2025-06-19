@@ -117,6 +117,7 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"runtime/debug"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -166,20 +167,24 @@ func readYaml(params *common.ExampleParams) (common.IpEvidences, error) {
 	return evidences, nil
 }
 
-func processEvidence(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, ipAddress string, report *common.Report) {
-	atomic.AddUint64(&report.EvidenceProcessed, 1)
-	// Complete and mark as done
+func processEvidenceBatch(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, evidenceBatch []string, report *common.Report, iterations int) {
 	defer wg.Done()
 
-	result, err := engine.Process(ipAddress)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	for iter := 0; iter < iterations; iter++ {
+		for _, ipAddress := range evidenceBatch {
+			atomic.AddUint64(&report.EvidenceProcessed, 1)
 
-	for _, property := range []string{"IpRangeStart"} {
-		// don't use the property in the current step, only processing data
-		if _, _, found := result.GetValueWeightByProperty(property); !found {
-			log.Printf("Not found values for the next property %s for address %s", property, ipAddress)
+			result, err := engine.Process(ipAddress)
+			if err != nil {
+				log.Fatalln(err)
+			}
+
+			for _, property := range []string{"IpRangeStart"} {
+				// don't use the property in the current step, only processing data
+				if _, _, found := result.GetValueWeightByProperty(property); !found {
+					log.Printf("Not found values for the next property %s for address %s", property, ipAddress)
+				}
+			}
 		}
 	}
 }
@@ -189,7 +194,7 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) 
 		IterationCount: iterationCount,
 	}
 
-	// Getting evidences from the file
+	// Getting evidences from the file (this can use GC)
 	evidences, err := readYaml(params)
 	if err != nil {
 		log.Fatalf("Failed to read yaml files.\n")
@@ -199,15 +204,43 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) 
 	// set the count of evidences to our report
 	actReport.EvidenceCount = evidences.Size()
 
+	// Force garbage collection before the test
+	log.Printf("Running GC before performance test...")
+	runtime.GC()
+	runtime.GC() // Run twice to ensure thorough cleanup
+
+	// Disable garbage collection during performance test
+	log.Printf("Disabling GC for performance test...")
+	debug.SetGCPercent(-1)
+
+	// Create evidence batches for each CPU core to process
+	numWorkers := runtime.NumCPU()
+	evidenceSlice := []string(evidences)
+	batchSize := len(evidenceSlice) / numWorkers
+	if batchSize == 0 {
+		batchSize = 1
+		numWorkers = len(evidenceSlice)
+	}
+
+	log.Printf("Using batch processing: %d workers, %d evidence per batch", numWorkers, batchSize)
+
 	var wg sync.WaitGroup
 
+	// Start timing after GC is disabled and batches are prepared
 	startProcessTime := time.Now()
 
-	// process loaded evidences
-	for i := 0; i < actReport.IterationCount; i++ {
-		for _, evidence := range evidences {
+	// Launch worker goroutines, each processing a batch of evidence
+	for i := 0; i < numWorkers; i++ {
+		start := i * batchSize
+		end := start + batchSize
+		if i == numWorkers-1 {
+			end = len(evidenceSlice) // Last worker takes any remaining items
+		}
+
+		if start < len(evidenceSlice) {
+			batch := evidenceSlice[start:end]
 			wg.Add(1)
-			go processEvidence(engine, &wg, evidence, actReport)
+			go processEvidenceBatch(engine, &wg, batch, actReport, actReport.IterationCount)
 		}
 	}
 
@@ -215,12 +248,19 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) 
 
 	actReport.ProcessingTime = time.Since(startProcessTime).Milliseconds()
 
+	// Re-enable garbage collection after test
+	log.Printf("Re-enabling GC after performance test...")
+	debug.SetGCPercent(100) // Default GC target percentage
+
 	return actReport, nil
 }
 
 func main() {
 	common.RunExample(
 		func(params *common.ExampleParams) error {
+			log.Printf("Starting IP Intelligence Performance Test (with GC control)")
+			log.Printf("Using data file: %s", params.DataFile)
+
 			//Create config
 			config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 			config.SetConcurrency(uint16(runtime.NumCPU()))
