@@ -21,13 +21,14 @@
  * ********************************************************************* */
 /*
 *
-@example getting_started.go
-Getting started example of using 51Degrees IP intelligence.
+@example offline_processing.go
+Offline processing example of using 51Degrees IP intelligence.
 
-The example shows how to use 51Degrees on-premise IP intelligence to
-determine the country of a given IP address in golang wrapper integration.
+This example demonstrates one possible use of the 51Degrees on-premise IP intelligence
+API and data for offline data processing. It also demonstrates that you can reuse the
+retrieved results for multiple uses and only then release it.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-go-examples/tree/main/ipi_onpremise/getting_started).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-go-examples/tree/main/ipi_onpremise/offline_processing).
 
 @include{doc} example-require-datafile-ipi.txt
 
@@ -55,53 +56,68 @@ engine, err := ipi_onpremise.New(
 
 )
 ```
-TODO: add description
+
+WithConfigIpi allows to configure the Ipi matching algorithm.
 
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
-TODO: add description
+
+# WithDataFile sets the path to the local data file, this parameter is required to start the engine
 
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
-TODO: add description
+
+# WithAutoUpdate enables or disables auto update
 
 ```
 ipi_onpremise.WithAutoUpdate(false),
 ```
 
-3. Engine output with the parameter of the required address to receive data
+3. Run evidence processing with parameters
+
 ```
-result, err := engine.Process(ipiItem.IpAddress)
+runOfflineProcessing(engine, params)
+```
+
+4. Load evidence one by one from the EvidenceYaml file
+
+```
+	// Open the Evidence Records file for processing
+	file, err := os.OpenFile(evidenceFilePath, os.O_RDONLY, 0444)
+	if err != nil {
+		log.Fatalf("Failed to open file \"%s\".\n", evidenceFilePath)
+	}
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Fatalf("Failed to close file \"%s\".\n", evidenceFilePath)
+		}
+	}()
+```
+
+5. Create a new file for writing processed evidence
+
+```
+	outFile, err := os.Create(outputFilePath)
+	if err != nil {
+		log.Fatalf("Failed to create file %s.\n", outputFilePath)
+	}
+	defer func() {
+		if err := outFile.Close(); err != nil {
+			log.Fatalf("Failed to close file \"%s\".\n", outputFilePath)
+		}
+	}()
 
 ```
 
-4. Checking for the presence of the result after engine processing
-```
-if result.HasValues() {}
+7. Get values by property
 
 ```
-
-5. Getting the results of the values after processing
-```
-value, weight, err := ipi_interop.GetPropertyValueAsStringWeightValue(result.CPtr, property)
-
-```
-
-Expected output (20000_ipi_evidence_records.processed.yml):
-```
-...
----
-ip-range-start: 96.235.176.24 #Weight: 1.0
-ip-range-end: 96.236.16.23 #Weight: 1.0
-accuracy-radius: "135802" #Weight: 1.0
-registered-country: Unknown #Weight: 1.0
-registered-name: VIS-BLOCK #Weight: 1.0
-longitude: "-75.016937772759178" #Weight: 1.0
-latitude: "40.071108127079071" #Weight: 1.0
-areas: POLYGON((-75.110324411755727 39.659108249153114,-75.154271065401161 39.656361583300274,-75.203711050752275 39.664601580858793,-75.291604358043159 39.683828241828671,-75.335551011688594 39.697561571092869,-75.384990997039708 39.716788232062747,-75.417950987273784 39.736014893032625,-75.45091097750786 39.757988219855342,-75.472884304330577 39.785454878383739,-75.494857631153295 39.815668202764975,-75.53331095309305 39.903561510055852,-75.544297616504409 39.939268166142767,-75.544297616504409 39.974974822229683,-75.53331095309305 40.065614795373392,-75.522324289681691 40.101321451460308,-75.505844294564653 40.134281441694391,-75.478377636036257 40.164494766075627,-74.994964445936461 40.573747978148745,-74.967497787408064 40.592974639118623,-74.940031128879667 40.609454634235661,-74.127018036439097 40.947294534134954,-74.088564714499341 40.961027863399153,-74.044618060853907 40.969267860957672,-73.995178075502793 40.969267860957672,-73.951231421857358 40.961027863399153,-73.912778099917603 40.947294534134954,-73.874324777977847 40.928067873165077,-73.841364787743771 40.90334788048952,-73.819391460921054 40.873134556108276,-73.802911465804016 40.84292123172704,-73.76995147556994 40.752281258583331,-73.76445814386426 40.719321268349255,-73.76995147556994 40.689107943968018,-73.775444807275619 40.656147953733942,-73.808404797509695 40.587481307412943,-73.813898129215374 40.568254646443066,-73.907284768211923 40.419934690389724,-73.940244758445999 40.381481368449968,-74.286324655903812 40.060121463667713,-74.324777977843567 40.032654805139316,-74.863124485000156 39.722281563768426,-74.896084475234233 39.705801568651388,-74.945524460585347 39.686574907681511,-74.978484450819423 39.675588244270152,-75.016937772759178 39.670094912564473,-75.110324411755727 39.659108249153114,-75.110324411755727 39.659108249153114)) #Weight: 1.0
----
+		value, weight, found := result.GetValueWeightByProperty(property)
+		if !found {
+			log.Printf("Not found values for the next property %s for address %s", property, IpAddress)
+		}
 ```
 */
 
@@ -120,6 +136,7 @@ import (
 	"strings"
 )
 
+// PropertiesData represents a structured data type containing various property fields commonly associated with network or location data.
 type PropertiesData struct {
 	IpRangeStart      interface{} `yaml:"ip-range-start"`
 	IpRangeEnd        interface{} `yaml:"ip-range-end"`
@@ -132,6 +149,8 @@ type PropertiesData struct {
 	MCC               interface{} `yaml:"mcc"`
 }
 
+// getIpi retrieves property data and associated comments for the specified IP address using the provided engine.
+// Returns structured property data, a map of YAML comments, and an error if one occurs.
 func getIpi(engine *ipi_onpremise.Engine, IpAddress string) (*PropertiesData, yaml.CommentMap, error) {
 	result, err := engine.Process(IpAddress)
 	if err != nil {
@@ -201,6 +220,7 @@ func getIpi(engine *ipi_onpremise.Engine, IpAddress string) (*PropertiesData, ya
 	return data, comments, nil
 }
 
+// runOfflineProcessing processes an evidence YAML file, retrieves IP-related data, and writes the output to a new YAML file.
 func runOfflineProcessing(engine *ipi_onpremise.Engine, params *common.ExampleParams) {
 	evidenceFilePath := common.GetFilePathByPath(params.EvidenceYaml)
 	evDir := filepath.Dir(evidenceFilePath)
@@ -281,6 +301,7 @@ func runOfflineProcessing(engine *ipi_onpremise.Engine, params *common.ExamplePa
 	}
 }
 
+// main is the entry point of the application. It initializes configuration, engine, and executes offline processing.
 func main() {
 	common.RunExample(
 		func(params *common.ExampleParams) error {
