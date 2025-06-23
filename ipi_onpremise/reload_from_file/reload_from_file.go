@@ -21,13 +21,14 @@
  * ********************************************************************* */
 /*
 *
-@example getting_started.go
-Getting started example of using 51Degrees IP intelligence.
+@example examples/ipi_onpremise/reload_from_file/reload_from_file.go
+Reload from file example of using 51Degrees IP intelligence.
 
-The example shows how to use 51Degrees on-premise IP intelligence to
-determine the country of a given IP address in golang wrapper integration.
+This example illustrates how to use a single reference to the resource manager
+to use 51Degrees on-premise IP intelligence and invoke the reload functionality
+instead of maintaining a reference to the dataset directly.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-go-examples/tree/main/ipi_onpremise/getting_started).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-go-examples/tree/main/ipi_onpremise/reload_from_file).
 
 @include{doc} example-require-datafile-ipi.txt
 
@@ -41,7 +42,8 @@ This setting specifies the performance profile that will be used when initializi
 ```
 config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 ```
-TODO: add description
+
+Set concurrency to available CPU size
 ```
 config.SetConcurrency(uint16(runtime.NumCPU()))
 ```
@@ -56,53 +58,45 @@ engine, err := ipi_onpremise.New(
 	ipi_onpremise.WithDataFile(params.DataFile),
 	// Enable automatic updates.
 	ipi_onpremise.WithAutoUpdate(false),
-
+	// File System Watcher is by default enabled
+	ipi_onpremise.WithFileWatch(true),
 )
 ```
-TODO: add description
+
+WithConfigIpi allows to configure the Ipi matching algorithm.
 
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
-TODO: add description
+
+# WithDataFile sets the path to the local data file, this parameter is required to start the engine
 
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
-TODO: add description
+
+# WithAutoUpdate enables or disables auto update
 
 ```
 ipi_onpremise.WithAutoUpdate(false),
 ```
 
-3. Engine output with the parameter of the required address to receive data
-```
-result, err := engine.Process(ipiItem.IpAddress)
+# WithFileWatch enables or disables file watching in case 3rd party updates the data file
 
 ```
-
-4. Checking for the presence of the result after engine processing
-```
-if result.HasValues() {}
-
+ipi_onpremise.WithFileWatch(true),
 ```
 
-5. Getting the results of the values after processing
-```
-_, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, property);
-
-```
-
-Expected output (performance_report.log):
+Expected output:
 ```
 ...
-Average 0.08775 ms per Evidence Record
-Average 11396.01 detections per second
-Total Evidence Records: 20000
-Iteration Count: 5
-Processed Evidence Records: 100000
-Number of CPUs: 14
-
+2025/06/23 11:46:08 Reloaded '2' times.
+2025/06/23 11:46:08 Failed to reload '0' times.
+2025/06/23 11:46:08 Hashcode '850133199' for iteration '0'.
+2025/06/23 11:46:08 Hashcode '850133199' for iteration '1'.
+2025/06/23 11:46:08 Hashcode '850133199' for iteration '2'.
+2025/06/23 11:46:08 Hashcode '850133199' for iteration '3'.
+2025/06/23 11:46:08 Hashcode '850133199' for iteration '4'.
 ```
 */
 package main
@@ -125,6 +119,7 @@ import (
 
 const iterationCount = 5
 
+// executeTest runs a test by processing an IP address through the engine, updating the report, and marking the work as done.
 func executeTest(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, report *common.Report, ipAddress string, iteration uint32) {
 	res, err := engine.Process(ipAddress)
 	if err != nil {
@@ -151,6 +146,10 @@ func executeTest(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, report *commo
 	defer wg.Done()
 }
 
+// performDetectionIterations executes multiple iterations of detection processing using the provided engine and parameters.
+// It processes evidence records from a YAML file, performs detection in parallel goroutines, and updates the given report.
+// Accepts an ipi_onpremise.Engine instance, a WaitGroup for synchronization, a Report for tracking results, and ExampleParams as input.
+// The function manages the lifecycle of file resources and ensures completion of goroutines for concurrent processing.
 func performDetectionIterations(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, report *common.Report, params *common.ExampleParams) {
 	for i := 0; i < report.IterationCount; i++ {
 		evidenceFilePath := common.GetFilePathByPath(params.EvidenceYaml)
@@ -194,6 +193,8 @@ func performDetectionIterations(engine *ipi_onpremise.Engine, wg *sync.WaitGroup
 	wg.Done()
 }
 
+// countEvidenceFromFile reads a YAML file containing evidence records, counts valid entries, and returns the total count.
+// It takes an ExampleParams structure for configuration and returns the count of evidence records or an error on failure.
 func countEvidenceFromFile(params *common.ExampleParams) (uint64, error) {
 	evidenceFilePath := common.GetFilePathByPath(params.EvidenceYaml)
 
@@ -234,6 +235,9 @@ func countEvidenceFromFile(params *common.ExampleParams) (uint64, error) {
 	return countEvidences, nil
 }
 
+// runReloadFromFile handles the reload of evidence data from a file and runs multiple detection iterations using the engine.
+// It tracks file reload attempts, processing failures, and ensures synchronization of concurrent operations using a WaitGroup.
+// Constructs a detailed report, including hashing data, to validate the correctness of multiple processing iterations.
 func runReloadFromFile(engine *ipi_onpremise.Engine, params *common.ExampleParams) {
 	count, err := countEvidenceFromFile(params)
 	if err != nil {
@@ -287,6 +291,7 @@ func runReloadFromFile(engine *ipi_onpremise.Engine, params *common.ExampleParam
 	}
 }
 
+// main is the entry point of the program, managing configuration, initializing the engine, and executing processing logic.
 func main() {
 	common.RunExample(
 		func(params *common.ExampleParams) error {

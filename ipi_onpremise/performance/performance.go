@@ -21,13 +21,18 @@
  * ********************************************************************* */
 /*
 *
-@example getting_started.go
-Getting started example of using 51Degrees IP intelligence.
+@example examples/ipi_onpremise/performance/performance.go
+The example illustrates a "clock-time" benchmark for assessing detection speed.
 
-The example shows how to use 51Degrees on-premise IP intelligence to
-determine the country of a given IP address in golang wrapper integration.
+It's important to understand the trade-offs between performance, memory usage and accuracy, that
+the 51Degrees pipeline configuration makes available, and this example shows a range of
+different configurations to illustrate the difference in performance.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-go-examples/tree/main/ipi_onpremise/getting_started).
+Requesting properties from a single component
+reduces detection time compared with requesting properties from multiple components. If you
+don't specify any properties to detect, then all properties are detected.
+
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-go-examples/tree/main/ipi_onpremise/performance).
 
 @include{doc} example-require-datafile-ipi.txt
 
@@ -35,15 +40,12 @@ This example is available in full on [GitHub](https://github.com/51Degrees/ip-in
 
 # In detail, the example shows how to
 
+
 1. Specify config for engine:
 This setting specifies the performance profile that will be used when initializing the C library.
 
 ```
 config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
-```
-TODO: add description
-```
-config.SetConcurrency(uint16(runtime.NumCPU()))
 ```
 
 2. Initialization of the engine with the following parameters:
@@ -56,53 +58,50 @@ engine, err := ipi_onpremise.New(
 	ipi_onpremise.WithDataFile(params.DataFile),
 	// Enable automatic updates.
 	ipi_onpremise.WithAutoUpdate(false),
-
+	// Set only 1 parameter for getting data
+	ipi_onpremise.WithProperties([]string{"IpRangeStart"}),
 )
 ```
-TODO: add description
+
+WithConfigIpi allows to configure the Ipi matching algorithm.
 
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
-TODO: add description
+
+# WithDataFile sets the path to the local data file, this parameter is required to start the engine
 
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
-TODO: add description
+
+# WithAutoUpdate enables or disables auto update
 
 ```
 ipi_onpremise.WithAutoUpdate(false),
 ```
 
-3. Engine output with the parameter of the required address to receive data
-```
-result, err := engine.Process(ipiItem.IpAddress)
+# WithProperties configures an Engine with a comma-separated list of manager properties derived from the provided slice.te
 
 ```
-
-4. Checking for the presence of the result after engine processing
-```
-if result.HasValues() {}
-
+ipi_onpremise.WithProperties([]string{"IpRangeStart"}),
 ```
 
-5. Getting the results of the values after processing
-```
-_, err := ipi_interop.GetPropertyValueAsRaw(result.CPtr, property);
+3. Run evidence processing with parameters and get the report as returned value
 
+```
+report, err := runPerformance(engine, params)
 ```
 
 Expected output (performance_report.log):
 ```
 ...
-Average 0.08775 ms per Evidence Record
-Average 11396.01 detections per second
+Average 0.00510 ms per Evidence Record
+Average 196078.43 detections per second
 Total Evidence Records: 20000
 Iteration Count: 5
 Processed Evidence Records: 100000
 Number of CPUs: 14
-
 ```
 */
 
@@ -123,10 +122,15 @@ import (
 	"time"
 )
 
+// reportFile defines the default path and filename for storing performance test results.
 const reportFile = "performance_report.log"
 
+// iterationCount defines the fixed number of iterations to be used for processing or performance testing loops.
 const iterationCount = 5
 
+// readYaml reads YAML data from a file, processes it line by line, and parses it into an IpEvidences collection.
+// It takes ExampleParams as input, retrieves the file path, and reads evidence records from the specified YAML file.
+// Returns IpEvidences containing the parsed data and an error if file operations or unmarshalling fail.
 func readYaml(params *common.ExampleParams) (common.IpEvidences, error) {
 	evidenceFilePath := common.GetFilePathByPath(params.EvidenceYaml)
 
@@ -167,6 +171,8 @@ func readYaml(params *common.ExampleParams) (common.IpEvidences, error) {
 	return evidences, nil
 }
 
+// processEvidenceBatch processes a batch of evidence IP addresses using the provided engine over multiple iterations.
+// The function updates the evidence processing count in the report and logs errors or missing data as encountered.
 func processEvidenceBatch(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, evidenceBatch []string, report *common.Report, iterations int) {
 	defer wg.Done()
 
@@ -189,6 +195,9 @@ func processEvidenceBatch(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, evid
 	}
 }
 
+// runPerformance executes a performance test by processing evidence data with the given engine and parameters.
+// It disables garbage collection during execution, utilizes multiple workers for evidence processing, and logs performance.
+// Returns a performance report and an error if the execution fails.
 func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) (*common.Report, error) {
 	actReport := &common.Report{
 		IterationCount: iterationCount,
@@ -273,7 +282,7 @@ func main() {
 				ipi_onpremise.WithDataFile(params.DataFile),
 				// Enable automatic updates.
 				ipi_onpremise.WithAutoUpdate(false),
-
+				// Set only 1 parameter for getting data
 				ipi_onpremise.WithProperties([]string{"IpRangeStart"}),
 			)
 			if err != nil {
