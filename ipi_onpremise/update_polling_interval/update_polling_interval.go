@@ -164,10 +164,10 @@ func processEvidence(engine *ipi_onpremise.Engine, ipAddress string) {
 		log.Printf("Areas: %+v:%.2f\n", value, weight)
 	}
 
-	if value, weight, found := result.GetValueWeightByProperty("MCC"); !found {
-		log.Printf("Not found values for the next property %s for address %s", "MCC", ipAddress)
+	if value, weight, found := result.GetValueWeightByProperty("Mcc"); !found {
+		log.Printf("Not found values for the next property %s for address %s", "Mcc", ipAddress)
 	} else {
-		log.Printf("MCC: %+v:%.2f\n", value, weight)
+		log.Printf("Mcc: %+v:%.2f\n", value, weight)
 	}
 }
 

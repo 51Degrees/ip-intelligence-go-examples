@@ -9,5 +9,5 @@ var Properties = []string{
 	"Longitude",
 	"Latitude",
 	"Areas",
-	"MCC",
+	"Mcc",
 }

@@ -146,7 +146,7 @@ type PropertiesData struct {
 	Longitude         interface{} `yaml:"longitude"`
 	Latitude          interface{} `yaml:"latitude"`
 	Areas             interface{} `yaml:"areas"`
-	MCC               interface{} `yaml:"mcc"`
+	Mcc               interface{} `yaml:"mcc"`
 }
 
 // getIpi retrieves property data and associated comments for the specified IP address using the provided engine.
@@ -209,8 +209,8 @@ func getIpi(engine *ipi_onpremise.Engine, IpAddress string) (*PropertiesData, ya
 			comments["$.areas"] = []*yaml.Comment{
 				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
 			}
-		case "MCC":
-			data.MCC = value
+		case "Mcc":
+			data.Mcc = value
 			comments["$.mcc"] = []*yaml.Comment{
 				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
 			}
