@@ -19,9 +19,9 @@
  * in the end user terms of the application under an appropriate heading,
  * such notice(s) shall fulfill the requirements of that article.
  * ********************************************************************* */
-/*
-*
-@example examples/ipi_onpremise/performance/performance.go
+
+/**
+@example examples/onpremise/performance.go
 The example illustrates a "clock-time" benchmark for assessing detection speed.
 
 It's important to understand the trade-offs between performance, memory usage and accuracy, that

@@ -19,9 +19,9 @@
  * in the end user terms of the application under an appropriate heading,
  * such notice(s) shall fulfill the requirements of that article.
  * ********************************************************************* */
-/*
-*
-@example examples/ipi_onpremise/offline_processing/offline_processing.go
+
+/**
+@example examples/onpremise/offline_processing.go
 Offline processing example of using 51Degrees IP intelligence.
 
 This example demonstrates one possible use of the 51Degrees on-premise IP intelligence

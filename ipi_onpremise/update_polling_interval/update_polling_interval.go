@@ -19,12 +19,13 @@
  * in the end user terms of the application under an appropriate heading,
  * such notice(s) shall fulfill the requirements of that article.
  * ********************************************************************* */
+
 /*
 *
-@example examples/ipi_onpremise/update_polling_interval/update_polling_interval.go
+@example examples/onpremise/update_polling_interval.go
 Update polling interval example of using 51Degrees IP intelligence.
 
-The example shows how to use 51Degrees on-premise IP intelligence to
+This example shows how to use 51Degrees on-premise IP intelligence to
 process IP address before and after IPI file will be updated.
 
 This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-go-examples/tree/main/ipi_onpremise/update_polling_interval).
@@ -44,6 +45,7 @@ config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 
 2. Initialization of the engine with the following parameters:
 ```
+
 	//Create on-premise engine
 	engine, err := ipi_onpremise.New(
 		// Optimized config provided
@@ -94,6 +96,7 @@ config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 		// Set properties for checking, default is [] = all properties
 		// ipi_onpremise.WithProperties([]string{}),
 	)
+
 ```
 */
 package main

@@ -19,9 +19,10 @@
  * in the end user terms of the application under an appropriate heading,
  * such notice(s) shall fulfill the requirements of that article.
  * ********************************************************************* */
+
 /*
 *
-@example examples/ipi_onpremise/reload_from_file/reload_from_file.go
+@example examples/onpremise/reload_from_file.go
 Reload from file example of using 51Degrees IP intelligence.
 
 This example illustrates how to use a single reference to the resource manager
@@ -60,6 +61,7 @@ engine, err := ipi_onpremise.New(
 	ipi_onpremise.WithAutoUpdate(false),
 	// File System Watcher is by default enabled
 	ipi_onpremise.WithFileWatch(true),
+
 )
 ```
 

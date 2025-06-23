@@ -21,7 +21,7 @@
  * ********************************************************************* */
 
 /**
-@example examples/ipi_onpremise/getting_started/getting_started.go
+@example examples/onpremise/getting_started.go
 Getting started example of using 51Degrees IP intelligence.
 
 The example shows how to use 51Degrees on-premise IP intelligence to
