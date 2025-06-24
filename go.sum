@@ -30,5 +30,7 @@ github.com/51Degrees/ip-intelligence-go v0.1.21 h1:zTKk4DLasL9Nz4b0QJ7KqeKSxxRwL
 github.com/51Degrees/ip-intelligence-go v0.1.21/go.mod h1:eh4T4QvdVem6cSIplKt2t4rKkD7q0ZA7heSJ9PRJz2U=
 github.com/51Degrees/ip-intelligence-go v0.1.31 h1:KTSYcu3YBJTk3O81OXF6comI0KVelczNyPoGgvd1SbM=
 github.com/51Degrees/ip-intelligence-go v0.1.31/go.mod h1:eh4T4QvdVem6cSIplKt2t4rKkD7q0ZA7heSJ9PRJz2U=
+github.com/51Degrees/ip-intelligence-go v0.1.32 h1:Us0rfwldFqNgv3/7DFHWfIiNuchEE57uEHqEH6lVF1g=
+github.com/51Degrees/ip-intelligence-go v0.1.32/go.mod h1:eh4T4QvdVem6cSIplKt2t4rKkD7q0ZA7heSJ9PRJz2U=
 github.com/goccy/go-yaml v1.17.1 h1:LI34wktB2xEE3ONG/2Ar54+/HJVBriAGJ55PHls4YuY=
 github.com/goccy/go-yaml v1.17.1/go.mod h1:XBurs7gK8ATbW4ZPGKgcbrY1Br56PdM69F7LkFRi1kA=

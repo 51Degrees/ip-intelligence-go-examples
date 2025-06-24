@@ -59,7 +59,7 @@ engine, err := ipi_onpremise.New(
 	// Enable automatic updates.
 	ipi_onpremise.WithAutoUpdate(false),
 	// Set only 1 parameter for getting data
-	ipi_onpremise.WithProperties([]string{"IpRangeStart"}),
+	ipi_onpremise.WithProperties([]string{"RegisteredName"}),
 )
 ```
 
@@ -84,7 +84,7 @@ ipi_onpremise.WithAutoUpdate(false),
 # WithProperties configures an Engine with a comma-separated list of manager properties derived from the provided slice.te
 
 ```
-ipi_onpremise.WithProperties([]string{"IpRangeStart"}),
+ipi_onpremise.WithProperties([]string{"RegisteredName"}),
 ```
 
 3. Run evidence processing with parameters and get the report as returned value
@@ -185,7 +185,7 @@ func processEvidenceBatch(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, evid
 				log.Fatalln(err)
 			}
 
-			for _, property := range []string{"IpRangeStart"} {
+			for _, property := range []string{"RegisteredName"} {
 				// don't use the property in the current step, only processing data
 				if _, _, found := result.GetValueWeightByProperty(property); !found {
 					log.Printf("Not found values for the next property %s for address %s", property, ipAddress)
@@ -283,7 +283,7 @@ func main() {
 				// Enable automatic updates.
 				ipi_onpremise.WithAutoUpdate(false),
 				// Set only 1 parameter for getting data
-				ipi_onpremise.WithProperties([]string{"IpRangeStart"}),
+				ipi_onpremise.WithProperties([]string{"RegisteredName"}),
 			)
 			if err != nil {
 				log.Fatalf("Failed to create engine: %v", err)
