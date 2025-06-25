@@ -22,11 +22,11 @@ type Report struct {
 }
 
 func (r *Report) AverageProcessingTime() float64 {
-	return float64(r.ProcessingTime) / float64(r.EvidenceCount)
+	return float64(r.ProcessingTime) / float64(r.EvidenceProcessed)
 }
 
 func (r *Report) DetectionPerSecond() float64 {
-	return float64(r.EvidenceCount) * 1000 / float64(r.ProcessingTime)
+	return float64(r.EvidenceProcessed) * 1000 / float64(r.ProcessingTime)
 }
 
 func (r *Report) PrintReport(logOutputPath string) error {

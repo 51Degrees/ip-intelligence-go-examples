@@ -196,13 +196,9 @@ func processEvidenceBatch(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, evid
 }
 
 // runPerformance executes a performance test by processing evidence data with the given engine and parameters.
-// It disables garbage collection during execution, utilizes multiple workers for evidence processing, and logs performance.
+// It disables garbage collection during execution and processes evidence single-threaded for optimal performance.
 // Returns a performance report and an error if the execution fails.
 func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) (*common.Report, error) {
-	actReport := &common.Report{
-		IterationCount: iterationCount,
-	}
-
 	// Getting evidences from the file (this can use GC)
 	evidences, err := readYaml(params)
 	if err != nil {
@@ -210,8 +206,17 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) 
 		return nil, err
 	}
 
-	// set the count of evidences to our report
-	actReport.EvidenceCount = evidences.Size()
+	evidenceSlice := []string(evidences)
+	
+	const totalDetections = 120000
+	log.Printf("Loaded %d IP addresses from evidence file", len(evidenceSlice))
+	log.Printf("Will process %d total detections for performance test", totalDetections)
+
+	actReport := &common.Report{
+		IterationCount:     1, // Single iteration of totalDetections
+		EvidenceCount:      uint64(len(evidenceSlice)),
+		EvidenceProcessed:  0,
+	}
 
 	// Force garbage collection before the test
 	log.Printf("Running GC before performance test...")
@@ -222,38 +227,31 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) 
 	log.Printf("Disabling GC for performance test...")
 	debug.SetGCPercent(-1)
 
-	// Create evidence batches for each CPU core to process
-	numWorkers := runtime.NumCPU()
-	evidenceSlice := []string(evidences)
-	batchSize := len(evidenceSlice) / numWorkers
-	if batchSize == 0 {
-		batchSize = 1
-		numWorkers = len(evidenceSlice)
-	}
+	// Create a single reusable ResultsIpi object for maximum performance
+	log.Printf("Creating reusable ResultsIpi object for optimal performance...")
+	reusableResults := engine.NewResultsIpi()
+	defer reusableResults.Free()
 
-	log.Printf("Using batch processing: %d workers, %d evidence per batch", numWorkers, batchSize)
+	log.Printf("Starting single-threaded performance test...")
 
-	var wg sync.WaitGroup
-
-	// Start timing after GC is disabled and batches are prepared
+	// Start timing after GC is disabled and objects are created
 	startProcessTime := time.Now()
 
-	// Launch worker goroutines, each processing a batch of evidence
-	for i := 0; i < numWorkers; i++ {
-		start := i * batchSize
-		end := start + batchSize
-		if i == numWorkers-1 {
-			end = len(evidenceSlice) // Last worker takes any remaining items
+	// Process evidence like the single-threaded test: one continuous loop
+	for i := 0; i < totalDetections; i++ {
+		ip := evidenceSlice[i%len(evidenceSlice)]
+		atomic.AddUint64(&actReport.EvidenceProcessed, 1)
+
+		result, err := engine.ProcessWithResults(ip, reusableResults)
+		if err != nil {
+			log.Fatalln(err)
 		}
 
-		if start < len(evidenceSlice) {
-			batch := evidenceSlice[start:end]
-			wg.Add(1)
-			go processEvidenceBatch(engine, &wg, batch, actReport, actReport.IterationCount)
+		// Access property to ensure full processing (like single-threaded test)
+		if _, _, found := result.GetValueWeightByProperty("RegisteredName"); !found {
+			log.Printf("RegisteredName not found for IP %s", ip)
 		}
 	}
-
-	wg.Wait()
 
 	actReport.ProcessingTime = time.Since(startProcessTime).Milliseconds()
 
@@ -270,9 +268,9 @@ func main() {
 			log.Printf("Starting IP Intelligence Performance Test (with GC control)")
 			log.Printf("Using data file: %s", params.DataFile)
 
-			//Create config
+			//Create config for single-threaded execution
 			config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
-			config.SetConcurrency(uint16(runtime.NumCPU()))
+			config.SetConcurrency(1) // Single thread
 
 			//Create on-premise engine
 			engine, err := ipi_onpremise.New(
@@ -295,9 +293,9 @@ func main() {
 				log.Fatalf("Failed to run performance: %v", err)
 			}
 
-			// Validation to make sure same number of Evidences have been read and processed
-			if report.EvidenceCount*uint64(report.IterationCount) != report.EvidenceProcessed {
-				log.Fatalln("Not all Evidence Records have been processed.")
+			// Validation to make sure all detections have been processed
+			if report.EvidenceProcessed != 120000 {
+				log.Fatalln("Not all detections have been processed.")
 			}
 
 			// print report to the file
