@@ -23,30 +23,30 @@
 /**
 @example examples/onpremise/getting_started.go
 # Getting started example of using 51Degrees IP intelligence.
-<br>
+
 The example shows how to use 51Degrees on-premise IP intelligence to determine the IP parameters
 (IpRangeStart, IpRangeEnd, AccuracyRadius, RegisteredCountry, RegisteredName, Longitude, Latitude, Areas, Mcc) of a given IP address
 in golang wrapper integration.
-<br>
+
 This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-go-examples/tree/main/ipi_onpremise/getting_started).
-<br>
+
 @include{doc} example-require-datafile-ipi.txt
 @include{doc} example-how-to-run-ipi.txt
-<br>
+
 ## In detail, the example shows how to
-<br>
-<br>
+
 ### 1. Specify config for engine:
-<br>
+
 This setting specifies the performance profile that will be used when initializing the C library.
-<br>
+
 ```
 config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 ```
-<br>
-<br>
+
+
+
 ### 2. Initialization of the engine with the following parameters:
-<br>
+
 ```
 engine, err := ipi_onpremise.New(
 
@@ -56,47 +56,41 @@ engine, err := ipi_onpremise.New(
 	ipi_onpremise.WithDataFile(params.DataFile),
 	// Enable automatic updates.
 	ipi_onpremise.WithAutoUpdate(false),
-
 )
 ```
-<br>
-<br>
+
 <b>WithConfigIpi allows to configure the Ipi matching algorithm.</b>
-<br>
+
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
-<br>
-<br>
+
 <b>WithDataFile sets the path to the local data file, this parameter is required to start the engine.</b>
-<br>
+
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
-<br>
-<br>
+
 <b>WithAutoUpdate enables or disables auto update.</b>
-<br>
+
 ```
 ipi_onpremise.WithAutoUpdate(false),
 ```
-<br>
-<br>
+
 ### 3. Engine output with the parameter of the required address to receive data
-<br>
+
 ```
 result, err := engine.Process(ipiItem.IpAddress)
 ```
-<br>
+
 ### 4. Getting the results of the value, weight values after processing
-<br>
+
 ```
 val, weight, _ := result.GetValueWeightByProperty(property)
 ```
-<br>
-<br>
+
 ### Expected output:
-<br>
+
 ```
 2025/06/10 09:45:06 Expected result for 185.28.167.77:
 Expected & Actual:
