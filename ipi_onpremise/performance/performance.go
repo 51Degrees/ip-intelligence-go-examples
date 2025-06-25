@@ -28,6 +28,9 @@ It's important to understand the trade-offs between performance, memory usage an
 the 51Degrees pipeline configuration makes available, and this example shows a range of
 different configurations to illustrate the difference in performance.
 
+By default, this example runs in multi-threaded mode using all available CPU cores for optimal
+performance. Use the `--single` flag to run in single-threaded mode for comparison.
+
 Requesting properties from a single component
 reduces detection time compared with requesting properties from multiple components. If you
 don't specify any properties to detect, then all properties are detected.
@@ -37,6 +40,15 @@ This example is available in full on [GitHub](https://github.com/51Degrees/ip-in
 @include{doc} example-require-datafile-ipi.txt
 
 @include{doc} example-how-to-run-ipi.txt
+
+## Usage
+```
+# Multi-threaded mode (default)
+go run .
+
+# Single-threaded mode
+go run . --single
+```
 
 ## In detail, the example shows how to
 
@@ -95,13 +107,24 @@ report, err := runPerformance(engine, params)
 <br/>
 ### Expected output (performance_report.log):
 
+Multi-threaded mode (default):
 ```
-Average 0.00510 ms per Evidence Record
-Average 196078.43 detections per second
+Average 0.00075 ms per Evidence Record
+Average 1333333.33 detections per second
 Total Evidence Records: 20000
-Iteration Count: 5
-Processed Evidence Records: 100000
-Number of CPUs: 14
+Iteration Count: 1
+Processed Evidence Records: 120000
+Number of CPUs: 12
+```
+
+Single-threaded mode (--single flag):
+```
+Average 0.00202 ms per Evidence Record
+Average 495867.77 detections per second
+Total Evidence Records: 20000
+Iteration Count: 1
+Processed Evidence Records: 120000
+Number of CPUs: 12
 ```
 */
 
@@ -109,6 +132,8 @@ package main
 
 import (
 	"bufio"
+	"flag"
+	"fmt"
 	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
 	"github.com/51Degrees/ip-intelligence-go/ipi_interop"
 	"github.com/51Degrees/ip-intelligence-go/ipi_onpremise"
@@ -196,9 +221,9 @@ func processEvidenceBatch(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, evid
 }
 
 // runPerformance executes a performance test by processing evidence data with the given engine and parameters.
-// It disables garbage collection during execution and processes evidence single-threaded for optimal performance.
+// It disables garbage collection during execution and processes evidence using configured concurrency.
 // Returns a performance report and an error if the execution fails.
-func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) (*common.Report, error) {
+func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams, numThreads int) (*common.Report, error) {
 	// Getting evidences from the file (this can use GC)
 	evidences, err := readYaml(params)
 	if err != nil {
@@ -210,7 +235,7 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) 
 
 	const totalDetections = 120000
 	log.Printf("Loaded %d IP addresses from evidence file", len(evidenceSlice))
-	log.Printf("Will process %d total detections for performance test", totalDetections)
+	log.Printf("Will process %d total detections for performance test with %d threads", totalDetections, numThreads)
 
 	actReport := &common.Report{
 		IterationCount:    1, // Single iteration of totalDetections
@@ -227,33 +252,85 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) 
 	log.Printf("Disabling GC for performance test...")
 	debug.SetGCPercent(-1)
 
-	// Create a single reusable ResultsIpi object for maximum performance
-	log.Printf("Creating reusable ResultsIpi object for optimal performance...")
-	reusableResults := engine.NewResultsIpi()
-	defer reusableResults.Free()
+	if numThreads == 1 {
+		// Single-threaded mode with one reusable ResultsIpi
+		log.Printf("Creating reusable ResultsIpi object for single-threaded performance...")
+		reusableResults := engine.NewResultsIpi()
+		defer reusableResults.Free()
 
-	log.Printf("Starting single-threaded performance test...")
+		log.Printf("Starting single-threaded performance test...")
 
-	// Start timing after GC is disabled and objects are created
-	startProcessTime := time.Now()
+		// Start timing after GC is disabled and objects are created
+		startProcessTime := time.Now()
 
-	// Process evidence like the single-threaded test: one continuous loop
-	for i := 0; i < totalDetections; i++ {
-		ip := evidenceSlice[i%len(evidenceSlice)]
-		atomic.AddUint64(&actReport.EvidenceProcessed, 1)
+		// Process evidence like the single-threaded test: one continuous loop
+		for i := 0; i < totalDetections; i++ {
+			ip := evidenceSlice[i%len(evidenceSlice)]
+			atomic.AddUint64(&actReport.EvidenceProcessed, 1)
 
-		result, err := engine.ProcessWithResults(ip, reusableResults)
-		if err != nil {
-			log.Fatalln(err)
+			result, err := engine.ProcessWithResults(ip, reusableResults)
+			if err != nil {
+				log.Fatalln(err)
+			}
+
+			// Access property to ensure full processing
+			if _, _, found := result.GetValueWeightByProperty("RegisteredName"); !found {
+				log.Printf("RegisteredName not found for IP %s", ip)
+			}
 		}
 
-		// Access property to ensure full processing (like single-threaded test)
-		if _, _, found := result.GetValueWeightByProperty("RegisteredName"); !found {
-			log.Printf("RegisteredName not found for IP %s", ip)
+		actReport.ProcessingTime = time.Since(startProcessTime).Milliseconds()
+	} else {
+		// Multi-threaded mode with thread-local reusable ResultsIpi objects
+		log.Printf("Starting multi-threaded performance test with %d threads...", numThreads)
+		
+		// Start timing before creating workers
+		startProcessTime := time.Now()
+		
+		// Create channels for work distribution
+		workCh := make(chan int, numThreads*2)
+		var wg sync.WaitGroup
+		
+		// Start worker goroutines
+		for t := 0; t < numThreads; t++ {
+			wg.Add(1)
+			go func(threadID int) {
+				defer wg.Done()
+				
+				// Each goroutine gets its own reusable ResultsIpi object
+				reusableResults := engine.NewResultsIpi()
+				defer reusableResults.Free()
+				
+				// Process work items
+				for i := range workCh {
+					ip := evidenceSlice[i%len(evidenceSlice)]
+					atomic.AddUint64(&actReport.EvidenceProcessed, 1)
+
+					result, err := engine.ProcessWithResults(ip, reusableResults)
+					if err != nil {
+						log.Printf("Thread %d: error processing IP %s: %v", threadID, ip, err)
+						continue
+					}
+
+					// Access property to ensure full processing
+					if _, _, found := result.GetValueWeightByProperty("RegisteredName"); !found {
+						log.Printf("Thread %d: RegisteredName not found for IP %s", threadID, ip)
+					}
+				}
+			}(t)
 		}
+		
+		// Distribute work
+		for i := 0; i < totalDetections; i++ {
+			workCh <- i
+		}
+		close(workCh)
+		
+		// Wait for all workers to complete
+		wg.Wait()
+		
+		actReport.ProcessingTime = time.Since(startProcessTime).Milliseconds()
 	}
-
-	actReport.ProcessingTime = time.Since(startProcessTime).Milliseconds()
 
 	// Re-enable garbage collection after test
 	log.Printf("Re-enabling GC after performance test...")
@@ -263,14 +340,35 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) 
 }
 
 func main() {
+	// Parse command-line flags
+	singleThreaded := flag.Bool("single", false, "Run in single-threaded mode (default is multi-threaded)")
+	
+	// Custom usage message
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s [options]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "\nIP Intelligence Performance Test\n")
+		fmt.Fprintf(os.Stderr, "By default, runs in multi-threaded mode using all CPU cores for optimal performance.\n\n")
+		fmt.Fprintf(os.Stderr, "Options:\n")
+		flag.PrintDefaults()
+	}
+	
+	flag.Parse()
+
 	common.RunExample(
 		func(params *common.ExampleParams) error {
+			// Determine number of threads - default to multi-threaded
+			numThreads := runtime.NumCPU()
+			if *singleThreaded {
+				numThreads = 1
+			}
+
 			log.Printf("Starting IP Intelligence Performance Test (with GC control)")
 			log.Printf("Using data file: %s", params.DataFile)
+			log.Printf("Running with %d threads", numThreads)
 
-			//Create config for single-threaded execution
+			//Create config
 			config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
-			config.SetConcurrency(1) // Single thread
+			config.SetConcurrency(uint16(numThreads))
 
 			//Create on-premise engine
 			engine, err := ipi_onpremise.New(
@@ -288,7 +386,7 @@ func main() {
 			}
 
 			// Run example
-			report, err := runPerformance(engine, params)
+			report, err := runPerformance(engine, params, numThreads)
 			if err != nil {
 				log.Fatalf("Failed to run performance: %v", err)
 			}
