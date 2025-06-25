@@ -5,13 +5,11 @@
 
 ## Introduction
 
-This repository contains examples of how to use
-module [ip-intelligence-go](https://github.com/51degrees/ip-intelligence-go)
+This repository contains examples of how to use the module [ip-intelligence-go](https://github.com/51degrees/ip-intelligence-go)
 
 ## Pre-requisites
 
-To run these examples you will need a data file and example evidence for some of the tests. To fetch these assets please
-run:
+To run these examples you will need a data file and example evidence for some tests. To fetch these assets please run:
 
 ```
 pwsh ci/fetch-assets.ps1 .
@@ -23,11 +21,11 @@ repo (the links are below) and put in the root of this repository.
 ### TODO: REPLACE THE FILE PATH TO THI IPI LITE FILE
 
 - [51Degrees-LiteV41.ipi](https://github.com/51Degrees/ip-intelligence-data)
-- [evidence.yml](https://github.com/51Degrees/ip-intelligence-data/blob/main/evidence.yml)
+- [20000 Evidence Records.yml](https://github.com/51Degrees/ip-intelligence-data/blob/main/evidence.yml)
 
 ### Software
 
-In order to use ip-intelligence-examples-go the following are required:
+To use ip-intelligence-examples-go the following are required:
 
 - A C compiler that support C11 or above (Gcc on Linux, Clang on MacOS and MinGW-x64 on Windows)
 - libatomic - which usually come with default Gcc, Clang installation

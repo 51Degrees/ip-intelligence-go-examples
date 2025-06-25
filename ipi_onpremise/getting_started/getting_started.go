@@ -30,10 +30,9 @@ determine the IP parameters (IpRangeStart, ) of a given IP address in golang wra
 This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-go-examples/tree/main/ipi_onpremise/getting_started).
 
 @include{doc} example-require-datafile-ipi.txt
-
 @include{doc} example-how-to-run-ipi.txt
 
-# In detail, the example shows how to
+## In detail, the example shows how to
 
 1. Specify config for engine:
 This setting specifies the performance profile that will be used when initializing the C library.
@@ -56,19 +55,17 @@ engine, err := ipi_onpremise.New(
 )
 ```
 
-WithConfigIpi allows to configure the Ipi matching algorithm.
+**WithConfigIpi allows to configure the Ipi matching algorithm.**
 
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
-
-# WithDataFile sets the path to the local data file, this parameter is required to start the engine
+**WithDataFile sets the path to the local data file, this parameter is required to start the engine**
 
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
-
-# WithAutoUpdate enables or disables auto update
+**WithAutoUpdate enables or disables auto update**
 
 ```
 ipi_onpremise.WithAutoUpdate(false),

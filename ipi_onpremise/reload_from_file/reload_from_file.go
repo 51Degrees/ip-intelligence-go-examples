@@ -20,8 +20,7 @@
  * such notice(s) shall fulfill the requirements of that article.
  * ********************************************************************* */
 
-/*
-*
+/**
 @example examples/onpremise/reload_from_file.go
 Reload from file example of using 51Degrees IP intelligence.
 
@@ -58,7 +57,7 @@ engine, err := ipi_onpremise.New(
 	// Path to your data file
 	ipi_onpremise.WithDataFile(params.DataFile),
 	// Enable automatic updates.
-	ipi_onpremise.WithAutoUpdate(false),
+	Ipi_onpremise.WithAutoUpdate(false),
 	// File System Watcher is by default enabled
 	ipi_onpremise.WithFileWatch(true),
 
@@ -101,6 +100,7 @@ Expected output:
 2025/06/23 11:46:08 Hashcode '850133199' for iteration '4'.
 ```
 */
+
 package main
 
 import (
