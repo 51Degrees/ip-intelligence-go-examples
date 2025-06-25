@@ -35,23 +35,23 @@ This example is available in full on [GitHub](https://github.com/51Degrees/ip-in
 @include{doc} example-how-to-run-ipi.txt
 
 ## In detail, the example shows how to
-<br/>
+
 ### 1. Specify config for engine:
-<br/>
+
 This setting specifies the performance profile that will be used when initializing the C library.
-<br/>
+
 ```
 config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 ```
 <br/>
 SetConcurrency set concurrency to available CPU size
-<br/>
+
 ```
 config.SetConcurrency(uint16(runtime.NumCPU()))
 ```
 <br/>
 ### 2. Initialization of the engine with the following parameters:
-<br/>
+
 ```
 engine, err := ipi_onpremise.New(
 
@@ -89,8 +89,9 @@ ipi_onpremise.WithAutoUpdate(false),
 ```
 ipi_onpremise.WithFileWatch(true),
 ```
-
+<br/>
 ### Expected output:
+
 ```
 2025/06/23 11:46:08 Reloaded '2' times.
 2025/06/23 11:46:08 Failed to reload '0' times.

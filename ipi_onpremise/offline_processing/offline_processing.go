@@ -37,7 +37,7 @@ This example is available in full on [GitHub](https://github.com/51Degrees/ip-in
 ## In detail, the example shows how to
 
 ### 1. Specify config for engine:
-<br/>
+
 This setting specifies the performance profile that will be used when initializing the C library.
 <br/>
 ```
@@ -45,7 +45,7 @@ config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 ```
 <br/>
 ### 2. Initialization of the engine with the following parameters:
-<br/>
+
 ```
 engine, err := ipi_onpremise.New(
 
@@ -78,13 +78,13 @@ ipi_onpremise.WithAutoUpdate(false),
 ```
 <br/>
 ### 3. Run evidence processing with parameters
-<br/>
+
 ```
 runOfflineProcessing(engine, params)
 ```
 <br/>
 ### 4. Load evidence one by one from the EvidenceYaml file
-<br/>
+
 ```
 file, err := os.OpenFile(evidenceFilePath, os.O_RDONLY, 0444)
 if err != nil {
@@ -98,7 +98,7 @@ defer func() {
 ```
 <br/>
 ### 5. Create a new file for writing processed evidence
-<br/>
+
 ```
 outFile, err := os.Create(outputFilePath)
 if err != nil {
@@ -112,7 +112,7 @@ defer func() {
 ```
 <br/>
 ### 6. Get values by property
-<br/>
+
 ```
 value, weight, found := result.GetValueWeightByProperty(property)
 if !found {

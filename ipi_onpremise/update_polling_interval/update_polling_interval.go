@@ -35,9 +35,9 @@ This example is available in full on [GitHub](https://github.com/51Degrees/ip-in
 @include{doc} example-how-to-run-ipi.txt
 
 ## In detail, the example shows how to
-<br/>
+
 ### 1. Specify config for engine:
-<br/>
+
 This setting specifies the performance profile that will be used when initializing the C library.
 
 ```
@@ -45,8 +45,8 @@ config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 ```
 <br/>
 ### 2. Initialization of the engine with the following parameters:
-```
 
+```
 	//Create on-premise engine
 	engine, err := ipi_onpremise.New(
 		// Optimized config provided

@@ -39,17 +39,17 @@ This example is available in full on [GitHub](https://github.com/51Degrees/ip-in
 @include{doc} example-how-to-run-ipi.txt
 
 ## In detail, the example shows how to
-<br/>
+
 ### 1. Specify config for engine:
-<br/>
+
 This setting specifies the performance profile that will be used when initializing the C library.
-<br/>
+
 ```
 config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 ```
 <br/>
 ### 2. Initialization of the engine with the following parameters:
-<br/>
+
 ```
 engine, err := ipi_onpremise.New(
 	// Optimized config provided
@@ -64,37 +64,37 @@ engine, err := ipi_onpremise.New(
 ```
 <br/>
 <b>WithConfigIpi</b> allows to configure the Ipi matching algorithm.
-<br/>
+
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
 <br/>
 <b>WithDataFile</b> sets the path to the local data file, this parameter is required to start the engine
-<br/>
+
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
 <br/>
 <b>WithAutoUpdate</b> enables or disables auto update
-<br/>
+
 ```
 ipi_onpremise.WithAutoUpdate(false),
 ```
 <br/>
 <b>WithProperties</b> configures an Engine with a comma-separated list of manager properties derived from the provided slice.te
-<br/>
+
 ```
 ipi_onpremise.WithProperties([]string{"RegisteredName"}),
 ```
 <br/>
 ### 3. Run evidence processing with parameters and get the report as returned value
-<br/>
+
 ```
 report, err := runPerformance(engine, params)
 ```
 <br/>
 ### Expected output (performance_report.log):
-<br/>
+
 ```
 Average 0.00510 ms per Evidence Record
 Average 196078.43 detections per second
