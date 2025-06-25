@@ -22,7 +22,7 @@
 
 /**
 @example examples/onpremise/reload_from_file.go
-Reload from file example of using 51Degrees IP intelligence.
+# Reload from file example of using 51Degrees IP intelligence.
 
 This example illustrates how to use a single reference to the resource manager
 to use 51Degrees on-premise IP intelligence and invoke the reload functionality
@@ -34,21 +34,24 @@ This example is available in full on [GitHub](https://github.com/51Degrees/ip-in
 
 @include{doc} example-how-to-run-ipi.txt
 
-# In detail, the example shows how to
-
-1. Specify config for engine:
+## In detail, the example shows how to
+<br/>
+### 1. Specify config for engine:
+<br/>
 This setting specifies the performance profile that will be used when initializing the C library.
-
+<br/>
 ```
 config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 ```
-
-Set concurrency to available CPU size
+<br/>
+SetConcurrency set concurrency to available CPU size
+<br/>
 ```
 config.SetConcurrency(uint16(runtime.NumCPU()))
 ```
-
-2. Initialization of the engine with the following parameters:
+<br/>
+### 2. Initialization of the engine with the following parameters:
+<br/>
 ```
 engine, err := ipi_onpremise.New(
 
@@ -60,37 +63,35 @@ engine, err := ipi_onpremise.New(
 	Ipi_onpremise.WithAutoUpdate(false),
 	// File System Watcher is by default enabled
 	ipi_onpremise.WithFileWatch(true),
-
 )
 ```
-
-WithConfigIpi allows to configure the Ipi matching algorithm.
+<br/>
+<b>WithConfigIpi</b> allows to configure the Ipi matching algorithm.
 
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
-
-# WithDataFile sets the path to the local data file, this parameter is required to start the engine
+<br/>
+<b>WithDataFile</b> sets the path to the local data file, this parameter is required to start the engine
 
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
-
-# WithAutoUpdate enables or disables auto update
+<br/>
+<b>WithAutoUpdate</b> enables or disables auto update
 
 ```
 ipi_onpremise.WithAutoUpdate(false),
 ```
-
-# WithFileWatch enables or disables file watching in case 3rd party updates the data file
+<br/>
+<b>WithFileWatch</b> enables or disables file watching in case 3rd party updates the data file
 
 ```
 ipi_onpremise.WithFileWatch(true),
 ```
 
-Expected output:
+### Expected output:
 ```
-...
 2025/06/23 11:46:08 Reloaded '2' times.
 2025/06/23 11:46:08 Failed to reload '0' times.
 2025/06/23 11:46:08 Hashcode '850133199' for iteration '0'.

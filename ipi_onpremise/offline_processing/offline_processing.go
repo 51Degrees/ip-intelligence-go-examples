@@ -22,7 +22,7 @@
 
 /**
 @example examples/onpremise/offline_processing.go
-Offline processing example of using 51Degrees IP intelligence.
+# Offline processing example of using 51Degrees IP intelligence.
 
 This example demonstrates one possible use of the 51Degrees on-premise IP intelligence
 API and data for offline data processing. It also demonstrates that you can reuse the
@@ -45,8 +45,8 @@ config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 ```
 <br/>
 ### 2. Initialization of the engine with the following parameters:
-```
 <br/>
+```
 engine, err := ipi_onpremise.New(
 
 	// Optimized config provided
@@ -60,25 +60,25 @@ engine, err := ipi_onpremise.New(
 ```
 <br/>
 <b>WithConfigIpi</b> allows to configure the Ipi matching algorithm.
-
+<br/>
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
 <br/>
 <b>WithDataFile</b> sets the path to the local data file, this parameter is required to start the engine
-
+<br/>
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
 <br/>
 <b>WithAutoUpdate</b> enables or disables auto update
-
+<br/>
 ```
 ipi_onpremise.WithAutoUpdate(false),
 ```
 <br/>
 ### 3. Run evidence processing with parameters
-
+<br/>
 ```
 runOfflineProcessing(engine, params)
 ```
@@ -86,40 +86,38 @@ runOfflineProcessing(engine, params)
 ### 4. Load evidence one by one from the EvidenceYaml file
 <br/>
 ```
-	// Open the Evidence Records file for processing
-	file, err := os.OpenFile(evidenceFilePath, os.O_RDONLY, 0444)
-	if err != nil {
-		log.Fatalf("Failed to open file \"%s\".\n", evidenceFilePath)
+file, err := os.OpenFile(evidenceFilePath, os.O_RDONLY, 0444)
+if err != nil {
+	log.Fatalf("Failed to open file \"%s\".\n", evidenceFilePath)
+}
+defer func() {
+	if err := file.Close(); err != nil {
+		log.Fatalf("Failed to close file \"%s\".\n", evidenceFilePath)
 	}
-	defer func() {
-		if err := file.Close(); err != nil {
-			log.Fatalf("Failed to close file \"%s\".\n", evidenceFilePath)
-		}
-	}()
+}()
 ```
 <br/>
 ### 5. Create a new file for writing processed evidence
 <br/>
 ```
-	outFile, err := os.Create(outputFilePath)
-	if err != nil {
-		log.Fatalf("Failed to create file %s.\n", outputFilePath)
+outFile, err := os.Create(outputFilePath)
+if err != nil {
+	log.Fatalf("Failed to create file %s.\n", outputFilePath)
+}
+defer func() {
+	if err := outFile.Close(); err != nil {
+		log.Fatalf("Failed to close file \"%s\".\n", outputFilePath)
 	}
-	defer func() {
-		if err := outFile.Close(); err != nil {
-			log.Fatalf("Failed to close file \"%s\".\n", outputFilePath)
-		}
-	}()
-
+}()
 ```
 <br/>
 ### 6. Get values by property
 <br/>
 ```
-		value, weight, found := result.GetValueWeightByProperty(property)
-		if !found {
-			log.Printf("Not found values for the next property %s for address %s", property, IpAddress)
-		}
+value, weight, found := result.GetValueWeightByProperty(property)
+if !found {
+	log.Printf("Not found values for the next property %s for address %s", property, IpAddress)
+}
 ```
 */
 

@@ -22,7 +22,7 @@
 
 /**
 @example examples/onpremise/performance.go
-The example illustrates a "clock-time" benchmark for assessing detection speed.
+# The example illustrates a "clock-time" benchmark for assessing detection speed.
 
 It's important to understand the trade-offs between performance, memory usage and accuracy, that
 the 51Degrees pipeline configuration makes available, and this example shows a range of
@@ -52,7 +52,6 @@ config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 <br/>
 ```
 engine, err := ipi_onpremise.New(
-
 	// Optimized config provided
 	ipi_onpremise.WithConfigIpi(config),
 	// Path to your data file
@@ -64,25 +63,25 @@ engine, err := ipi_onpremise.New(
 )
 ```
 <br/>
-WithConfigIpi allows to configure the Ipi matching algorithm.
+<b>WithConfigIpi</b> allows to configure the Ipi matching algorithm.
 <br/>
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
 <br/>
-# WithDataFile sets the path to the local data file, this parameter is required to start the engine
+<b>WithDataFile</b> sets the path to the local data file, this parameter is required to start the engine
 <br/>
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
 <br/>
-# WithAutoUpdate enables or disables auto update
+<b>WithAutoUpdate</b> enables or disables auto update
 <br/>
 ```
 ipi_onpremise.WithAutoUpdate(false),
 ```
 <br/>
-# WithProperties configures an Engine with a comma-separated list of manager properties derived from the provided slice.te
+<b>WithProperties</b> configures an Engine with a comma-separated list of manager properties derived from the provided slice.te
 <br/>
 ```
 ipi_onpremise.WithProperties([]string{"RegisteredName"}),
