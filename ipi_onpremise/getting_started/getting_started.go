@@ -22,10 +22,11 @@
 
 /**
 @example examples/onpremise/getting_started.go
-Getting started example of using 51Degrees IP intelligence.
+# Getting started example of using 51Degrees IP intelligence.
 
-The example shows how to use 51Degrees on-premise IP intelligence to
-determine the IP parameters (IpRangeStart, ) of a given IP address in golang wrapper integration.
+The example shows how to use 51Degrees on-premise IP intelligence to determine the IP parameters
+(IpRangeStart, IpRangeEnd, AccuracyRadius, RegisteredCountry, RegisteredName, Longitude, Latitude, Areas, Mcc) of a given IP address
+in golang wrapper integration.
 
 This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-go-examples/tree/main/ipi_onpremise/getting_started).
 
@@ -34,14 +35,16 @@ This example is available in full on [GitHub](https://github.com/51Degrees/ip-in
 
 ## In detail, the example shows how to
 
-1. Specify config for engine:
+### 1. Specify config for engine:
+
 This setting specifies the performance profile that will be used when initializing the C library.
 
 ```
 config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 ```
 
-2. Initialization of the engine with the following parameters:
+### 2. Initialization of the engine with the following parameters:
+
 ```
 engine, err := ipi_onpremise.New(
 
@@ -55,37 +58,39 @@ engine, err := ipi_onpremise.New(
 )
 ```
 
-**WithConfigIpi allows to configure the Ipi matching algorithm.**
+ ** WithConfigIpi allows to configure the Ipi matching algorithm. **
 
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
-**WithDataFile sets the path to the local data file, this parameter is required to start the engine**
+
+ ** WithDataFile sets the path to the local data file, this parameter is required to start the engine. **
 
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
-**WithAutoUpdate enables or disables auto update**
+
+ ** WithAutoUpdate enables or disables auto update. **
 
 ```
 ipi_onpremise.WithAutoUpdate(false),
 ```
 
-3. Engine output with the parameter of the required address to receive data
+### 3. Engine output with the parameter of the required address to receive data
+
 ```
 result, err := engine.Process(ipiItem.IpAddress)
-
 ```
 
-5. Getting the results of the value, weight values after processing
+### 4. Getting the results of the value, weight values after processing
+
 ```
 val, weight, _ := result.GetValueWeightByProperty(property)
-
 ```
 
-Expected output:
+### Expected output:
+
 ```
-...
 2025/06/10 09:45:06 Expected result for 185.28.167.77:
 Expected & Actual:
 IpRangeStart: 185.28.167.0:1.00
