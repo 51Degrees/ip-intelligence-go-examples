@@ -35,6 +35,7 @@ This example is available in full on [GitHub](https://github.com/51Degrees/ip-in
 
 ## In detail, the example shows how to
 
+
 ### 1. Specify config for engine:
 
 This setting specifies the performance profile that will be used when initializing the C library.
@@ -42,6 +43,7 @@ This setting specifies the performance profile that will be used when initializi
 ```
 config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 ```
+
 
 ### 2. Initialization of the engine with the following parameters:
 
@@ -58,19 +60,19 @@ engine, err := ipi_onpremise.New(
 )
 ```
 
- ** WithConfigIpi allows to configure the Ipi matching algorithm. **
+<b>WithConfigIpi allows to configure the Ipi matching algorithm.</b>
 
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
 
- ** WithDataFile sets the path to the local data file, this parameter is required to start the engine. **
+<b>WithDataFile sets the path to the local data file, this parameter is required to start the engine.</b>
 
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
 
- ** WithAutoUpdate enables or disables auto update. **
+ <b>WithAutoUpdate enables or disables auto update.</b>
 
 ```
 ipi_onpremise.WithAutoUpdate(false),
