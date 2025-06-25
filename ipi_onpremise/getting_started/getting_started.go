@@ -58,37 +58,40 @@ engine, err := ipi_onpremise.New(
 	ipi_onpremise.WithAutoUpdate(false),
 )
 ```
-
+<br/>
 <b>WithConfigIpi allows to configure the Ipi matching algorithm.</b>
 
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
-
+<br/>
 <b>WithDataFile sets the path to the local data file, this parameter is required to start the engine.</b>
 
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
-
+<br/>
 <b>WithAutoUpdate enables or disables auto update.</b>
 
 ```
 ipi_onpremise.WithAutoUpdate(false),
 ```
-
+<br/>
+<br/>
 ### 3. Engine output with the parameter of the required address to receive data
 
 ```
 result, err := engine.Process(ipiItem.IpAddress)
 ```
-
+<br/>
+<br/>
 ### 4. Getting the results of the value, weight values after processing
 
 ```
 val, weight, _ := result.GetValueWeightByProperty(property)
 ```
-
+<br/>
+<br/>
 ### Expected output:
 
 ```
