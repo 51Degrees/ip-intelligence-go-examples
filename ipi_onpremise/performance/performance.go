@@ -38,17 +38,18 @@ This example is available in full on [GitHub](https://github.com/51Degrees/ip-in
 
 @include{doc} example-how-to-run-ipi.txt
 
-# In detail, the example shows how to
-
-
-1. Specify config for engine:
+## In detail, the example shows how to
+<br/>
+### 1. Specify config for engine:
+<br/>
 This setting specifies the performance profile that will be used when initializing the C library.
-
+<br/>
 ```
 config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 ```
-
-2. Initialization of the engine with the following parameters:
+<br/>
+### 2. Initialization of the engine with the following parameters:
+<br/>
 ```
 engine, err := ipi_onpremise.New(
 
@@ -62,40 +63,40 @@ engine, err := ipi_onpremise.New(
 	ipi_onpremise.WithProperties([]string{"RegisteredName"}),
 )
 ```
-
+<br/>
 WithConfigIpi allows to configure the Ipi matching algorithm.
-
+<br/>
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
-
+<br/>
 # WithDataFile sets the path to the local data file, this parameter is required to start the engine
-
+<br/>
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
-
+<br/>
 # WithAutoUpdate enables or disables auto update
-
+<br/>
 ```
 ipi_onpremise.WithAutoUpdate(false),
 ```
-
+<br/>
 # WithProperties configures an Engine with a comma-separated list of manager properties derived from the provided slice.te
-
+<br/>
 ```
 ipi_onpremise.WithProperties([]string{"RegisteredName"}),
 ```
-
-3. Run evidence processing with parameters and get the report as returned value
-
+<br/>
+### 3. Run evidence processing with parameters and get the report as returned value
+<br/>
 ```
 report, err := runPerformance(engine, params)
 ```
-
-Expected output (performance_report.log):
+<br/>
+### Expected output (performance_report.log):
+<br/>
 ```
-...
 Average 0.00510 ms per Evidence Record
 Average 196078.43 detections per second
 Total Evidence Records: 20000
@@ -207,15 +208,15 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams) 
 	}
 
 	evidenceSlice := []string(evidences)
-	
+
 	const totalDetections = 120000
 	log.Printf("Loaded %d IP addresses from evidence file", len(evidenceSlice))
 	log.Printf("Will process %d total detections for performance test", totalDetections)
 
 	actReport := &common.Report{
-		IterationCount:     1, // Single iteration of totalDetections
-		EvidenceCount:      uint64(len(evidenceSlice)),
-		EvidenceProcessed:  0,
+		IterationCount:    1, // Single iteration of totalDetections
+		EvidenceCount:     uint64(len(evidenceSlice)),
+		EvidenceProcessed: 0,
 	}
 
 	// Force garbage collection before the test

@@ -36,15 +36,13 @@ This example is available in full on [GitHub](https://github.com/51Degrees/ip-in
 ## In detail, the example shows how to
 
 ### 1. Specify config for engine:
-
+<br/>
 This setting specifies the performance profile that will be used when initializing the C library.
 
 ```
 config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 ```
-
-
-
+<br/>
 ### 2. Initialization of the engine with the following parameters:
 
 ```
@@ -59,31 +57,29 @@ engine, err := ipi_onpremise.New(
 )
 ```
 <br/>
-<b>WithConfigIpi allows to configure the Ipi matching algorithm.</b>
+<b>WithConfigIpi</b> allows to configure the Ipi matching algorithm.
 
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
 <br/>
-<b>WithDataFile sets the path to the local data file, this parameter is required to start the engine.</b>
+<b>WithDataFile</b> sets the path to the local data file, this parameter is required to start the engine.
 
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
 <br/>
-<b>WithAutoUpdate enables or disables auto update.</b>
+<b>WithAutoUpdate</b> enables or disables auto update.
 
 ```
 ipi_onpremise.WithAutoUpdate(false),
 ```
-<br/>
 <br/>
 ### 3. Engine output with the parameter of the required address to receive data
 
 ```
 result, err := engine.Process(ipiItem.IpAddress)
 ```
-<br/>
 <br/>
 ### 4. Getting the results of the value, weight values after processing
 

@@ -34,17 +34,19 @@ This example is available in full on [GitHub](https://github.com/51Degrees/ip-in
 
 @include{doc} example-how-to-run-ipi.txt
 
-# In detail, the example shows how to
+## In detail, the example shows how to
 
-1. Specify config for engine:
+### 1. Specify config for engine:
+<br/>
 This setting specifies the performance profile that will be used when initializing the C library.
-
+<br/>
 ```
 config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 ```
-
-2. Initialization of the engine with the following parameters:
+<br/>
+### 2. Initialization of the engine with the following parameters:
 ```
+<br/>
 engine, err := ipi_onpremise.New(
 
 	// Optimized config provided
@@ -56,33 +58,33 @@ engine, err := ipi_onpremise.New(
 
 )
 ```
-
-WithConfigIpi allows to configure the Ipi matching algorithm.
+<br/>
+<b>WithConfigIpi</b> allows to configure the Ipi matching algorithm.
 
 ```
 ipi_onpremise.WithConfigIpi(config)
 ```
-
-# WithDataFile sets the path to the local data file, this parameter is required to start the engine
+<br/>
+<b>WithDataFile</b> sets the path to the local data file, this parameter is required to start the engine
 
 ```
 ipi_onpremise.WithDataFile(params.DataFile),
 ```
-
-# WithAutoUpdate enables or disables auto update
+<br/>
+<b>WithAutoUpdate</b> enables or disables auto update
 
 ```
 ipi_onpremise.WithAutoUpdate(false),
 ```
-
-3. Run evidence processing with parameters
+<br/>
+### 3. Run evidence processing with parameters
 
 ```
 runOfflineProcessing(engine, params)
 ```
-
-4. Load evidence one by one from the EvidenceYaml file
-
+<br/>
+### 4. Load evidence one by one from the EvidenceYaml file
+<br/>
 ```
 	// Open the Evidence Records file for processing
 	file, err := os.OpenFile(evidenceFilePath, os.O_RDONLY, 0444)
@@ -95,9 +97,9 @@ runOfflineProcessing(engine, params)
 		}
 	}()
 ```
-
-5. Create a new file for writing processed evidence
-
+<br/>
+### 5. Create a new file for writing processed evidence
+<br/>
 ```
 	outFile, err := os.Create(outputFilePath)
 	if err != nil {
@@ -110,9 +112,9 @@ runOfflineProcessing(engine, params)
 	}()
 
 ```
-
-7. Get values by property
-
+<br/>
+### 6. Get values by property
+<br/>
 ```
 		value, weight, found := result.GetValueWeightByProperty(property)
 		if !found {
