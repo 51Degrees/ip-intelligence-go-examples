@@ -1,6 +1,6 @@
-Average 0.00350 ms per Evidence Record
-Average 285714.29 detections per second
+Average 0.00170 ms per Evidence Record
+Average 588235.29 detections per second
 Total Evidence Records: 20000
-Iteration Count: 5
-Processed Evidence Records: 100000
+Iteration Count: 1
+Processed Evidence Records: 120000
 Number of CPUs: 14
