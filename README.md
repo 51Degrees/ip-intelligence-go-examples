@@ -57,3 +57,10 @@ go run [example_dir/example_name].go
 go run onpremise/update_polling_interval/update_polling_interval.go
 ```
 For further details of how to run each example, please read more in the comment section located at the top of each example file.
+
+To provide a different path to a data file or evidence file use environment variables, e.g.
+```bash
+DATA_FILE=../51Degrees-EnterpriseIpiV41.ipi go run getting_started/getting_started.go
+DATA_FILE=../51Degrees-EnterpriseIpiV41.ipi EVIDENCE_YAML=../20000_ipi_evidence_records.yml go run offline_processing/offline_processing.go
+DATA_FILE=../51Degrees-EnterpriseIpiV41.ipi EVIDENCE_YAML=../20000_ipi_evidence_records.yml go run update_polling_interval/update_polling_interval.go
+```
