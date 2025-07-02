@@ -135,8 +135,8 @@ import (
 	"flag"
 	"fmt"
 	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
-	"github.com/51Degrees/ip-intelligence-go/ipi_interop"
-	"github.com/51Degrees/ip-intelligence-go/ipi_onpremise"
+	"github.com/51Degrees/ip-intelligence-go/v4/ipi_interop"
+	"github.com/51Degrees/ip-intelligence-go/v4/ipi_onpremise"
 	"github.com/goccy/go-yaml"
 	"log"
 	"os"
@@ -283,24 +283,24 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams, 
 	} else {
 		// Multi-threaded mode with thread-local reusable ResultsIpi objects
 		log.Printf("Starting multi-threaded performance test with %d threads...", numThreads)
-		
+
 		// Start timing before creating workers
 		startProcessTime := time.Now()
-		
+
 		// Create channels for work distribution
 		workCh := make(chan int, numThreads*2)
 		var wg sync.WaitGroup
-		
+
 		// Start worker goroutines
 		for t := 0; t < numThreads; t++ {
 			wg.Add(1)
 			go func(threadID int) {
 				defer wg.Done()
-				
+
 				// Each goroutine gets its own reusable ResultsIpi object
 				reusableResults := engine.NewResultsIpi()
 				defer reusableResults.Free()
-				
+
 				// Process work items
 				for i := range workCh {
 					ip := evidenceSlice[i%len(evidenceSlice)]
@@ -319,16 +319,16 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams, 
 				}
 			}(t)
 		}
-		
+
 		// Distribute work
 		for i := 0; i < totalDetections; i++ {
 			workCh <- i
 		}
 		close(workCh)
-		
+
 		// Wait for all workers to complete
 		wg.Wait()
-		
+
 		actReport.ProcessingTime = time.Since(startProcessTime).Milliseconds()
 	}
 
@@ -342,7 +342,7 @@ func runPerformance(engine *ipi_onpremise.Engine, params *common.ExampleParams, 
 func main() {
 	// Parse command-line flags
 	singleThreaded := flag.Bool("single", false, "Run in single-threaded mode (default is multi-threaded)")
-	
+
 	// Custom usage message
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: %s [options]\n", os.Args[0])
@@ -351,7 +351,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Options:\n")
 		flag.PrintDefaults()
 	}
-	
+
 	flag.Parse()
 
 	common.RunExample(

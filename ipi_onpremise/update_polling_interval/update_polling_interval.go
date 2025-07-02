@@ -104,8 +104,8 @@ package main
 
 import (
 	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
-	"github.com/51Degrees/ip-intelligence-go/ipi_interop"
-	"github.com/51Degrees/ip-intelligence-go/ipi_onpremise"
+	"github.com/51Degrees/ip-intelligence-go/v4/ipi_interop"
+	"github.com/51Degrees/ip-intelligence-go/v4/ipi_onpremise"
 	"log"
 	"time"
 )
