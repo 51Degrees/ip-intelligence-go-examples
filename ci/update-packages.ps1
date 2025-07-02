@@ -1,16 +1,14 @@
 param (
-    [Parameter(Mandatory=$true)]
-    [string]$RepoName,
-    [Parameter(Mandatory=$true)]
-    [string]$OrgName,
-    [bool]$DryRun = $false
+    [Parameter(Mandatory)][string]$RepoName
 )
+$ErrorActionPreference = "Stop"
+$PSNativeCommandUseErrorActionPreference = $true
 
 Push-Location $RepoName
 try {
     $env:GOPROXY = "direct"
-    go get -u ./... || $(throw "'go get -u' failed")
-    go mod tidy || $(throw "'go mod tidy' failed")
+    go get -u ./...
+    go mod tidy
 } finally {
     Pop-Location
 }
