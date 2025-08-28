@@ -54,8 +54,13 @@ config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 		// Path to your data file
 		ipi_onpremise.WithDataFile(params.DataFile),
 
-		// WithLicenseKey sets the license key to use when pulling the data file
-		// A license key can be obtained with a subscription from https://51degrees.com/pricing
+		// To test this example, you need to:
+		// 1. Host an IP Intelligence data file (.ipi) at a custom URL accessible to this application
+		// 2. Provide that custom URL using WithDataUpdateUrl parameter
+		// 3. No license key is required when using a custom URL
+		// For production use, you will eventually need to use a Distributor service and
+		// license key to keep your data file updated.
+		// To obtain access to enterprise data files for hosting, please contact us at https://51degrees.com/contact-us
 		ipi_onpremise.WithLicenseKey(params.LicenseKey),
 
 		// WithAutoUpdate enables or disables auto update
@@ -191,8 +196,13 @@ func main() {
 				// Path to your data file
 				ipi_onpremise.WithDataFile(params.DataFile),
 
-				// For automatic updates to work you will need to provide a license key.
-				// A license key can be obtained with a subscription from https://51degrees.com/pricing
+				// To test this example, you need to:
+				// 1. Host an IP Intelligence data file (.ipi) at a custom URL accessible to this application
+				// 2. Provide that custom URL using WithDataUpdateUrl parameter
+				// 3. No license key is required when using a custom URL
+				// For production use, you will eventually need to use a Distributor service and
+				// license key to keep your data file updated.
+				// To obtain access to enterprise data files for hosting, please contact us at https://51degrees.com/contact-us
 				ipi_onpremise.WithLicenseKey(params.LicenseKey),
 
 				// Enable automatic updates.
