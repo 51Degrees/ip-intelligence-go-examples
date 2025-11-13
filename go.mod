@@ -5,7 +5,7 @@ go 1.21.0
 toolchain go1.24.3
 
 require (
-	github.com/51Degrees/ip-intelligence-go/v4 v4.5.9
+	github.com/51Degrees/ip-intelligence-go/v4 v4.5.10
 	github.com/goccy/go-yaml v1.18.0
 )
 
