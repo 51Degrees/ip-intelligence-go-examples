@@ -114,10 +114,17 @@ defer func() {
 ### 6. Get values by property
 
 ```
-value, weight, found := result.GetValueWeightByProperty(property)
-if !found {
-	log.Printf("Not found values for the next property %s for address %s", property, IpAddress)
-}
+  // For most properties (non-weighted):
+  value, found := result.GetValueByProperty(property)
+  if !found {
+  	log.Printf("Not found values for the next property %s for address %s", property, IpAddress)
+  }
+
+  // For MCC property (weighted):
+  value, weight, found := result.GetValueWeightByProperty(property)
+  if !found {
+  	log.Printf("Not found values for the next property %s for address %s", property, IpAddress)
+  }
 ```
 */
 
@@ -126,14 +133,15 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
-	"github.com/51Degrees/ip-intelligence-go/v4/ipi_interop"
-	"github.com/51Degrees/ip-intelligence-go/v4/ipi_onpremise"
-	"github.com/goccy/go-yaml"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
+	"github.com/51Degrees/ip-intelligence-go/v4/ipi_interop"
+	"github.com/51Degrees/ip-intelligence-go/v4/ipi_onpremise"
+	"github.com/goccy/go-yaml"
 )
 
 // PropertiesData represents a structured data type containing various property fields commonly associated with network or location data.
@@ -163,7 +171,17 @@ func getIpi(engine *ipi_onpremise.Engine, IpAddress string) (*PropertiesData, ya
 	comments := yaml.CommentMap{}
 
 	for _, property := range common.Properties {
-		value, weight, found := result.GetValueWeightByProperty(property)
+		var value interface{}
+		var weight float64
+		var found bool
+
+		// Only Mcc property has weight
+		if property == "Mcc" {
+			value, weight, found = result.GetValueWeightByProperty(property)
+		} else {
+			value, found = result.GetValueByProperty(property)
+		}
+
 		if !found {
 			log.Printf("Not found values for the next property %s for address %s", property, IpAddress)
 		}
@@ -171,46 +189,31 @@ func getIpi(engine *ipi_onpremise.Engine, IpAddress string) (*PropertiesData, ya
 		switch property {
 		case "IpRangeStart":
 			data.IpRangeStart = value
-			comments["$.ip-range-start"] = []*yaml.Comment{
-				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-			}
+			// No weight comment for non-weighted properties
 		case "IpRangeEnd":
 			data.IpRangeEnd = value
-			comments["$.ip-range-end"] = []*yaml.Comment{
-				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-			}
+			// No weight comment for non-weighted properties
 		case "AccuracyRadius":
 			data.AccuracyRadius = value
-			comments["$.accuracy-radius"] = []*yaml.Comment{
-				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-			}
+			// No weight comment for non-weighted properties
 		case "RegisteredCountry":
 			data.RegisteredCountry = value
-			comments["$.registered-country"] = []*yaml.Comment{
-				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-			}
+			// No weight comment for non-weighted properties
 		case "RegisteredName":
 			data.RegisteredName = value
-			comments["$.registered-name"] = []*yaml.Comment{
-				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-			}
+			// No weight comment for non-weighted properties
 		case "Longitude":
 			data.Longitude = value
-			comments["$.longitude"] = []*yaml.Comment{
-				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-			}
+			// No weight comment for non-weighted properties
 		case "Latitude":
 			data.Latitude = value
-			comments["$.latitude"] = []*yaml.Comment{
-				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-			}
+			// No weight comment for non-weighted properties
 		case "Areas":
 			data.Areas = value
-			comments["$.areas"] = []*yaml.Comment{
-				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-			}
+			// No weight comment for non-weighted properties
 		case "Mcc":
 			data.Mcc = value
+			// Only Mcc has weight comment
 			comments["$.mcc"] = []*yaml.Comment{
 				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
 			}

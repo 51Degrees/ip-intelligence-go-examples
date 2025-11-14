@@ -103,11 +103,12 @@ config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 package main
 
 import (
+	"log"
+	"time"
+
 	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
 	"github.com/51Degrees/ip-intelligence-go/v4/ipi_interop"
 	"github.com/51Degrees/ip-intelligence-go/v4/ipi_onpremise"
-	"log"
-	"time"
 )
 
 func processEvidence(engine *ipi_onpremise.Engine, ipAddress string) {
@@ -117,52 +118,52 @@ func processEvidence(engine *ipi_onpremise.Engine, ipAddress string) {
 		return
 	}
 
-	if value, weight, found := result.GetValueWeightByProperty("IpRangeStart"); !found {
-		log.Printf("Not found values for the next property %s for address %s", "IpRangeStart", ipAddress)
+	if value, found := result.GetValueByProperty("IpRangeStart"); !found {
+		log.Printf("IpRangeStart not found for address %s", ipAddress)
 	} else {
-		log.Printf("IpRangeStart: %+v:%.2f\n", value, weight)
+		log.Printf("IpRangeStart: %+v\n", value)
 	}
 
-	if value, weight, found := result.GetValueWeightByProperty("IpRangeEnd"); !found {
-		log.Printf("Not found values for the next property %s for address %s", "IpRangeEnd", ipAddress)
+	if value, found := result.GetValueByProperty("IpRangeEnd"); !found {
+		log.Printf("IpRangeEnd not found for address %s", ipAddress)
 	} else {
-		log.Printf("IpRangeEnd: %+v:%.2f\n", value, weight)
+		log.Printf("IpRangeEnd: %+v\n", value)
 	}
 
-	if value, weight, found := result.GetValueWeightByProperty("AccuracyRadius"); !found {
-		log.Printf("Not found values for the next property %s for address %s", "AccuracyRadius", ipAddress)
+	if value, found := result.GetValueByProperty("AccuracyRadius"); !found {
+		log.Printf("AccuracyRadius not found for address %s", ipAddress)
 	} else {
-		log.Printf("AccuracyRadius: %+v:%.2f\n", value, weight)
+		log.Printf("AccuracyRadius: %+v\n", value)
 	}
 
-	if value, weight, found := result.GetValueWeightByProperty("RegisteredCountry"); !found {
-		log.Printf("Not found values for the next property %s for address %s", "RegisteredCountry", ipAddress)
+	if value, found := result.GetValueByProperty("RegisteredCountry"); !found {
+		log.Printf("RegisteredCountry not found for address %s", ipAddress)
 	} else {
-		log.Printf("AccuracyRadius: %+v:%.2f\n", value, weight)
+		log.Printf("RegisteredCountry: %+v\n", value)
 	}
 
-	if value, weight, found := result.GetValueWeightByProperty("RegisteredName"); !found {
-		log.Printf("Not found values for the next property %s for address %s", "RegisteredName", ipAddress)
+	if value, found := result.GetValueByProperty("RegisteredName"); !found {
+		log.Printf("RegisteredName not found for address %s", ipAddress)
 	} else {
-		log.Printf("RegisteredName: %+v:%.2f\n", value, weight)
+		log.Printf("RegisteredName: %+v\n", value)
 	}
 
-	if value, weight, found := result.GetValueWeightByProperty("Longitude"); !found {
-		log.Printf("Not found values for the next property %s for address %s", "Longitude", ipAddress)
+	if value, found := result.GetValueByProperty("Longitude"); !found {
+		log.Printf("Longitude not found for address %s", ipAddress)
 	} else {
-		log.Printf("Longitude: %+v:%.2f\n", value, weight)
+		log.Printf("Longitude: %+v\n", value)
 	}
 
-	if value, weight, found := result.GetValueWeightByProperty("Latitude"); !found {
-		log.Printf("Not found values for the next property %s for address %s", "Latitude", ipAddress)
+	if value, found := result.GetValueByProperty("Latitude"); !found {
+		log.Printf("Latitude not found for address %s", ipAddress)
 	} else {
-		log.Printf("Latitude: %+v:%.2f\n", value, weight)
+		log.Printf("Latitude: %+v\n", value)
 	}
 
-	if value, weight, found := result.GetValueWeightByProperty("Areas"); !found {
-		log.Printf("Not found values for the next property %s for address %s", "Areas", ipAddress)
+	if value, found := result.GetValueByProperty("Areas"); !found {
+		log.Printf("Areas not found for address %s", ipAddress)
 	} else {
-		log.Printf("Areas: %+v:%.2f\n", value, weight)
+		log.Printf("Areas: %+v\n", value)
 	}
 
 	if value, weight, found := result.GetValueWeightByProperty("Mcc"); !found {

@@ -1,4 +1,83 @@
-.idea
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# IDE specific files
+.idea/
 .idea/*
+.vscode/
+.vscode/*
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+*.o
+*.a
+
+# Folders
+_obj
+_test
+
+# Architecture specific extensions/prefixes
+*.[568vq]
+[568vq].out
+
+# cgo generated files
+*.cgo1.go
+*.cgo2.c
+_cgo_defun.c
+_cgo_gotypes.go
+_cgo_export.*
+
+# Test coverage files
+coverage.txt
+coverage.html
+*.coverprofile
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Log files
+*.log
+performance_report.log
 ipi_performance_report.log
+
+# Data files (if any)
+*.dat
+*.hash
+*.yml.processed
+*.processed.yml
 20000_ipi_evidence_records.processed.yml
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Debug files
+debug
+__debug_bin
+
+# Ignore the ip-intelligence-go directory
+ip-intelligence-go/
+ip-intelligence-go/*
