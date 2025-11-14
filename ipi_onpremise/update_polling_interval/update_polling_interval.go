@@ -135,10 +135,16 @@ func processEvidence(engine *ipi_onpremise.Engine, ipAddress string) {
 		log.Printf("IpRangeEnd: %+v\n", value)
 	}
 
-	if value, found := result.GetValueByProperty("AccuracyRadius"); !found {
-		log.Printf("AccuracyRadius not found for address %s", ipAddress)
+	if value, found := result.GetValueByProperty("AccuracyRadiusMin"); !found {
+		log.Printf("AccuracyRadiusMin not found for address %s", ipAddress)
 	} else {
-		log.Printf("AccuracyRadius: %+v\n", value)
+		log.Printf("AccuracyRadiusMin: %+v\n", value)
+	}
+
+	if value, found := result.GetValueByProperty("AccuracyRadiusMax"); !found {
+		log.Printf("AccuracyRadiusMax not found for address %s", ipAddress)
+	} else {
+		log.Printf("AccuracyRadiusMax: %+v\n", value)
 	}
 
 	if value, found := result.GetValueByProperty("RegisteredCountry"); !found {

@@ -81,3 +81,6 @@ __debug_bin
 # Ignore the ip-intelligence-go directory
 ip-intelligence-go/
 ip-intelligence-go/*
+ip-intelligence-go/ipi_interop
+ip-intelligence-go/ipi_interop/*
+ip-intelligence-go/**/**

@@ -148,7 +148,8 @@ import (
 type PropertiesData struct {
 	IpRangeStart      interface{} `yaml:"ip-range-start"`
 	IpRangeEnd        interface{} `yaml:"ip-range-end"`
-	AccuracyRadius    interface{} `yaml:"accuracy-radius"`
+	AccuracyRadiusMin interface{} `yaml:"accuracy-radius-min"`
+	AccuracyRadiusMax interface{} `yaml:"accuracy-radius-max"`
 	RegisteredCountry interface{} `yaml:"registered-country"`
 	RegisteredName    interface{} `yaml:"registered-name"`
 	Longitude         interface{} `yaml:"longitude"`
@@ -193,8 +194,11 @@ func getIpi(engine *ipi_onpremise.Engine, IpAddress string) (*PropertiesData, ya
 		case "IpRangeEnd":
 			data.IpRangeEnd = value
 			// No weight comment for non-weighted properties
-		case "AccuracyRadius":
-			data.AccuracyRadius = value
+		case "AccuracyRadiusMin":
+			data.AccuracyRadiusMin = value
+			// No weight comment for non-weighted properties
+		case "AccuracyRadiusMax":
+			data.AccuracyRadiusMax = value
 			// No weight comment for non-weighted properties
 		case "RegisteredCountry":
 			data.RegisteredCountry = value
