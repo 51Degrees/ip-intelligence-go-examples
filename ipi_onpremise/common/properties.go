@@ -3,7 +3,8 @@ package common
 var Properties = []string{
 	"IpRangeStart",
 	"IpRangeEnd",
-	"AccuracyRadius",
+	"AccuracyRadiusMin",
+	"AccuracyRadiusMax",
 	"RegisteredCountry",
 	"RegisteredName",
 	"Longitude",
