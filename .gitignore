@@ -84,3 +84,5 @@ ip-intelligence-go/*
 ip-intelligence-go/ipi_interop
 ip-intelligence-go/ipi_interop/*
 ip-intelligence-go/**/**
+
+.tool-versions
