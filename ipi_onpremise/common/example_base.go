@@ -20,7 +20,7 @@ func RunExample(exampleFunc ExampleFunc) {
 		licenseKey = os.Getenv("IPI_KEY")
 	}
 
-	dataFile := os.Getenv("IPI_DATA_FILE_SAMPLE_URL") //Tmp replacing DATA_FILE to IPI_DATA_FILE_SAMPLE_URL
+	dataFile := os.Getenv("DATA_FILE")
 	if dataFile == "" {
 		dataFile = "51Degrees-LiteV41.ipi"
 	}
