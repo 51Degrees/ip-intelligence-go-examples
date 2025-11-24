@@ -11,6 +11,7 @@ on:
 
 jobs:
   PackageUpdate:
+    name: Nightly Package Update
     uses: 51Degrees/common-ci/.github/workflows/nightly-package-update.yml@main
     with:
       repo-name: ${{ github.event.repository.name }}
