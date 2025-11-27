@@ -2,3 +2,5 @@
 .idea/*
 ipi_performance_report.log
 20000_ipi_evidence_records.processed.yml
+.tool-versions
+.DS_Store
