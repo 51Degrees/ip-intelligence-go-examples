@@ -109,16 +109,17 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
-	"github.com/51Degrees/ip-intelligence-go/v4/ipi_interop"
-	"github.com/51Degrees/ip-intelligence-go/v4/ipi_onpremise"
-	"github.com/goccy/go-yaml"
 	"log"
 	"os"
 	"runtime"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
+	"github.com/51Degrees/ip-intelligence-go/v4/ipi_interop"
+	"github.com/51Degrees/ip-intelligence-go/v4/ipi_onpremise"
+	"github.com/goccy/go-yaml"
 )
 
 const iterationCount = 5
@@ -132,12 +133,21 @@ func executeTest(engine *ipi_onpremise.Engine, wg *sync.WaitGroup, report *commo
 
 	var actual bytes.Buffer
 	for _, property := range common.Properties {
-		value, weight, found := res.GetValueWeightByProperty(property)
-		if !found {
-			log.Printf("Not found values for the next property %s for address %s", property, ipAddress)
+		if property == "Mcc" {
+			// Only Mcc property has weight
+			value, weight, found := res.GetValueWeightByProperty(property)
+			if !found {
+				log.Printf("Not found values for the next property %s for address %s", property, ipAddress)
+			}
+			actual.WriteString(fmt.Sprintf("%s: %+v:%.2f\n", property, value, weight))
+		} else {
+			// All other properties are non-weighted
+			value, found := res.GetValueByProperty(property)
+			if !found {
+				log.Printf("Not found values for the next property %s for address %s", property, ipAddress)
+			}
+			actual.WriteString(fmt.Sprintf("%s: %+v\n", property, value))
 		}
-
-		actual.WriteString(fmt.Sprintf("%s: %+v:%.2f\n", property, value, weight))
 	}
 
 	hash := common.GenerateHash(actual.String())
