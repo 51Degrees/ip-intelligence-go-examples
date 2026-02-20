@@ -63,6 +63,8 @@ engine, err := ipi_onpremise.New(
 	Ipi_onpremise.WithAutoUpdate(false),
 	// File System Watcher is by default enabled
 	ipi_onpremise.WithFileWatch(true),
+	// Optional properties configuration
+	ipi_onpremise.WithProperties(common.Properties),
 )
 ```
 <br/>
@@ -90,6 +92,12 @@ ipi_onpremise.WithAutoUpdate(false),
 ipi_onpremise.WithFileWatch(true),
 ```
 <br/>
+<b>WithProperties</b> (Optional) Configures the list of properties to be returned. If not configured - all properties will be returned.
+
+```
+ipi_onpremise.WithProperties(common.Properties),
+```
+<br/>
 ### Expected output:
 
 ```
@@ -109,16 +117,17 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
-	"github.com/51Degrees/ip-intelligence-go/v4/ipi_interop"
-	"github.com/51Degrees/ip-intelligence-go/v4/ipi_onpremise"
-	"github.com/goccy/go-yaml"
 	"log"
 	"os"
 	"runtime"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
+	"github.com/51Degrees/ip-intelligence-go/v4/ipi_interop"
+	"github.com/51Degrees/ip-intelligence-go/v4/ipi_onpremise"
+	"github.com/goccy/go-yaml"
 )
 
 const iterationCount = 5
@@ -313,6 +322,8 @@ func main() {
 				ipi_onpremise.WithAutoUpdate(false),
 				// File System Watcher is by default enabled
 				ipi_onpremise.WithFileWatch(true),
+				// Defined list of properties
+				ipi_onpremise.WithProperties(common.Properties),
 			)
 			if err != nil {
 				log.Fatalf("Failed to create engine: %v", err)

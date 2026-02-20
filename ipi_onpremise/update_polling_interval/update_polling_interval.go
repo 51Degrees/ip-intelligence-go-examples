@@ -108,11 +108,12 @@ config := ipi_interop.NewConfigIpi(ipi_interop.InMemory)
 package main
 
 import (
+	"log"
+	"time"
+
 	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
 	"github.com/51Degrees/ip-intelligence-go/v4/ipi_interop"
 	"github.com/51Degrees/ip-intelligence-go/v4/ipi_onpremise"
-	"log"
-	"time"
 )
 
 func processEvidence(engine *ipi_onpremise.Engine, ipAddress string) {
@@ -134,16 +135,10 @@ func processEvidence(engine *ipi_onpremise.Engine, ipAddress string) {
 		log.Printf("IpRangeEnd: %+v:%.2f\n", value, weight)
 	}
 
-	if value, weight, found := result.GetValueWeightByProperty("AccuracyRadius"); !found {
-		log.Printf("Not found values for the next property %s for address %s", "AccuracyRadius", ipAddress)
-	} else {
-		log.Printf("AccuracyRadius: %+v:%.2f\n", value, weight)
-	}
-
 	if value, weight, found := result.GetValueWeightByProperty("RegisteredCountry"); !found {
 		log.Printf("Not found values for the next property %s for address %s", "RegisteredCountry", ipAddress)
 	} else {
-		log.Printf("AccuracyRadius: %+v:%.2f\n", value, weight)
+		log.Printf("RegisteredCountry: %+v:%.2f\n", value, weight)
 	}
 
 	if value, weight, found := result.GetValueWeightByProperty("RegisteredName"); !found {
@@ -242,7 +237,7 @@ func main() {
 				// ipi_onpremise.WithCustomLogger()
 
 				// Set properties for checking, default is [] = all properties
-				// ipi_onpremise.WithProperties([]string{}),
+				ipi_onpremise.WithProperties([]string{}),
 			)
 			if err != nil {
 				log.Fatalf("Failed to create engine: %v", err)
