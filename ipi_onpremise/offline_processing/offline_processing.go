@@ -55,6 +55,8 @@ engine, err := ipi_onpremise.New(
 	ipi_onpremise.WithDataFile(params.DataFile),
 	// Enable automatic updates.
 	ipi_onpremise.WithAutoUpdate(false),
+	// Optional properties configuration
+	ipi_onpremise.WithProperties(common.Properties),
 
 )
 ```
@@ -75,6 +77,12 @@ ipi_onpremise.WithDataFile(params.DataFile),
 <br/>
 ```
 ipi_onpremise.WithAutoUpdate(false),
+```
+<br/>
+<b>WithProperties</b> (Optional) Configures the list of properties to be returned. If not configured - all properties will be returned.
+
+```
+ipi_onpremise.WithProperties(common.Properties),
 ```
 <br/>
 ### 3. Run evidence processing with parameters
@@ -126,21 +134,21 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
-	"github.com/51Degrees/ip-intelligence-go/v4/ipi_interop"
-	"github.com/51Degrees/ip-intelligence-go/v4/ipi_onpremise"
-	"github.com/goccy/go-yaml"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/51Degrees/ip-intelligence-examples-go/ipi_onpremise/common"
+	"github.com/51Degrees/ip-intelligence-go/v4/ipi_interop"
+	"github.com/51Degrees/ip-intelligence-go/v4/ipi_onpremise"
+	"github.com/goccy/go-yaml"
 )
 
 // PropertiesData represents a structured data type containing various property fields commonly associated with network or location data.
 type PropertiesData struct {
 	IpRangeStart      interface{} `yaml:"ip-range-start"`
 	IpRangeEnd        interface{} `yaml:"ip-range-end"`
-	AccuracyRadius    interface{} `yaml:"accuracy-radius"`
 	RegisteredCountry interface{} `yaml:"registered-country"`
 	RegisteredName    interface{} `yaml:"registered-name"`
 	Longitude         interface{} `yaml:"longitude"`
@@ -177,11 +185,6 @@ func getIpi(engine *ipi_onpremise.Engine, IpAddress string) (*PropertiesData, ya
 		case "IpRangeEnd":
 			data.IpRangeEnd = value
 			comments["$.ip-range-end"] = []*yaml.Comment{
-				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
-			}
-		case "AccuracyRadius":
-			data.AccuracyRadius = value
-			comments["$.accuracy-radius"] = []*yaml.Comment{
 				yaml.LineComment(fmt.Sprintf("Weight: %.1f", weight)),
 			}
 		case "RegisteredCountry":
@@ -316,6 +319,8 @@ func main() {
 				ipi_onpremise.WithDataFile(params.DataFile),
 				// Enable automatic updates.
 				ipi_onpremise.WithAutoUpdate(false),
+				// Defined list of properties
+				ipi_onpremise.WithProperties(common.Properties),
 			)
 			if err != nil {
 				log.Fatalf("Failed to create engine: %v", err)

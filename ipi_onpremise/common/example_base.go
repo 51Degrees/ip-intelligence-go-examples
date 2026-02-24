@@ -22,7 +22,7 @@ func RunExample(exampleFunc ExampleFunc) {
 
 	dataFile := os.Getenv("DATA_FILE")
 	if dataFile == "" {
-		dataFile = "51Degrees-LiteV41.ipi"
+		dataFile = "51Degrees-EnterpriseIpiV41.ipi"
 	}
 
 	evidenceYaml := os.Getenv("EVIDENCE_YAML")
